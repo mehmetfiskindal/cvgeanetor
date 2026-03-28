@@ -7,26 +7,33 @@ on:
     workflow_dispatch:
 
 permissions:
-    contents: read
-    pages: write
-    id-token: write
+  contents: write
 
 concurrency:
     group: pages
     cancel-in-progress: true
 
 jobs:
-    build:
+    deploy:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+            - name: Checkout source without external actions
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  git init .
+                  git config --global --add safe.directory "$PWD"
+                  git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+                  git fetch --depth 1 origin "${GITHUB_SHA}"
+                  git checkout --detach FETCH_HEAD
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: npm
+            - name: Verify Node version
+              run: |
+                  set -euo pipefail
+                  node --version
+                  npm --version
+                  node -e "const major=parseInt(process.versions.node.split('.')[0],10); if (major < 20) { console.error('Node.js 20+ is required'); process.exit(1) }"
 
             - name: Install dependencies
               run: npm ci
@@ -34,21 +41,35 @@ jobs:
             - name: Build
               run: npm run build
 
-            - name: Setup Pages
-              uses: actions/configure-pages@v5
+            - name: Publish dist to gh-pages branch
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
 
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                  path: ./dist
+                  if [ ! -d dist ]; then
+                    echo "dist directory not found"
+                    exit 1
+                  fi
 
-    deploy:
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
-        runs-on: ubuntu-latest
-        needs: build
-        steps:
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
+                  tmp_dir="$(mktemp -d)"
+                  cp -R dist/. "$tmp_dir/"
+
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+                  git switch --orphan gh-pages
+                  git reset --hard
+                  git clean -fdx
+
+                  cp -R "$tmp_dir"/. .
+                  touch .nojekyll
+
+                  git add -A
+                  if git diff --cached --quiet; then
+                    echo "No changes to publish"
+                    exit 0
+                  fi
+
+                  git commit -m "Deploy ${GITHUB_SHA}"
+                  git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:gh-pages

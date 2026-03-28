@@ -18,14 +18,23 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+            - name: Checkout source without external actions
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
+                  git init .
+                  git config --global --add safe.directory "$PWD"
+                  git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+                  git fetch --depth 1 origin "${GITHUB_SHA}"
+                  git checkout --detach FETCH_HEAD
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: npm
+            - name: Verify Node version
+              run: |
+                  set -euo pipefail
+                  node --version
+                  npm --version
+                  node -e "const major=parseInt(process.versions.node.split('.')[0],10); if (major < 20) { console.error('Node.js 20+ is required'); process.exit(1) }"
 
             - name: Install dependencies
               run: npm ci
