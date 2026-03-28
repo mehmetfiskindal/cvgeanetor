@@ -1,8 +1,6 @@
 import cvStore from '../cv-store'
 
 export default function StepActivities() {
-  const { activities } = cvStore.data
-
   return (
     <div class="form-stack">
       <header class="form-header">
@@ -14,20 +12,42 @@ export default function StepActivities() {
         <p class="hint-chip">Pozisyonla ilgili faaliyetleri öncele.</p>
       </header>
 
-      <label class="field">
-        <span>İlgi alanları</span>
-        <textarea rows="4" value={activities.interests} input={(event: Event) => cvStore.updateActivities('interests', (event.target as HTMLTextAreaElement).value)} />
-      </label>
+      <div class="summary-card compact-card">
+        <p>
+          Faaliyet kaydı: <strong>{cvStore.data.activities.length}</strong>
+        </p>
+        <button class="button" click={cvStore.addActivity}>
+          Faaliyet ekle
+        </button>
+      </div>
 
-      <label class="field">
-        <span>Üyelikler</span>
-        <textarea rows="4" value={activities.memberships} input={(event: Event) => cvStore.updateActivities('memberships', (event.target as HTMLTextAreaElement).value)} />
-      </label>
+      {cvStore.data.activities.map((item) => (
+        <article class="entry-card" key={item.id}>
+          <label class="field">
+            <span>Kategori</span>
+            <input
+              value={item.category}
+              placeholder="İlgi alanları / Üyelikler / Gönüllülük"
+              input={(event: Event) => (item.category = (event.target as HTMLInputElement).value)}
+            />
+          </label>
 
-      <label class="field">
-        <span>Faaliyetler / gönüllülük</span>
-        <textarea rows="4" value={activities.volunteerWork} input={(event: Event) => cvStore.updateActivities('volunteerWork', (event.target as HTMLTextAreaElement).value)} />
-      </label>
+          <label class="field">
+            <span>Açıklama</span>
+            <textarea
+              rows="4"
+              value={item.description}
+              input={(event: Event) => (item.description = (event.target as HTMLTextAreaElement).value)}
+            />
+          </label>
+
+          <div class="entry-actions">
+            <button class="ghost-button" click={() => cvStore.removeActivity(item.id)}>
+              Kaydı kaldır
+            </button>
+          </div>
+        </article>
+      ))}
     </div>
   )
 }

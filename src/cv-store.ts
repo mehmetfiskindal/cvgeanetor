@@ -102,10 +102,10 @@ export interface ReferenceItem {
   email: string
 }
 
-export interface ActivitiesInfo {
-  interests: string
-  memberships: string
-  volunteerWork: string
+export interface ActivityItem {
+  id: string
+  category: string
+  description: string
 }
 
 export interface AtsSettings {
@@ -127,7 +127,7 @@ export interface CVData {
   languages: LanguageItem[]
   computerSkills: SkillItem[]
   otherSkills: SkillItem[]
-  activities: ActivitiesInfo
+  activities: ActivityItem[]
   references: ReferenceItem[]
   referencesAvailableOnRequest: boolean
   ats: AtsSettings
@@ -219,6 +219,12 @@ const createSkillItem = (): SkillItem => ({
   details: createLocalizedText(),
 })
 
+const createActivityItem = (): ActivityItem => ({
+  id: uid(),
+  category: '',
+  description: '',
+})
+
 const createReferenceItem = (): ReferenceItem => ({
   id: uid(),
   fullName: '',
@@ -258,11 +264,7 @@ const createDefaultData = (): CVData => ({
   languages: [createLanguageItem()],
   computerSkills: [createSkillItem()],
   otherSkills: [createSkillItem()],
-  activities: {
-    interests: '',
-    memberships: '',
-    volunteerWork: '',
-  },
+  activities: [createActivityItem()],
   references: [createReferenceItem()],
   referencesAvailableOnRequest: false,
   ats: {
@@ -394,8 +396,13 @@ class CVStore extends Store {
     target[locale] = value
   }
 
-  updateActivities = (field: keyof ActivitiesInfo, value: string) => {
-    this.data.activities[field] = value
+  addActivity = () => {
+    this.data.activities.push(createActivityItem())
+  }
+
+  removeActivity = (id: string) => {
+    if (this.data.activities.length === 1) return
+    this.data.activities = this.data.activities.filter((item) => item.id !== id)
   }
 
   updateAtsField = (field: keyof AtsSettings, value: string) => {
@@ -509,7 +516,7 @@ class CVStore extends Store {
     if (!file) return
 
     try {
-      const text = await file.text()
+      const text = (await file.text()).replace(/^\uFEFF/, '')
       const parsed = JSON.parse(text) as Partial<CVData>
       const normalizedParsed = normalizeImportedText(parsed)
       const merged = this.mergeWithDefaults(normalizedParsed)
@@ -684,7 +691,22 @@ class CVStore extends Store {
       contact: { ...merged.contact, ...(value.contact || {}) },
       personalDetails: { ...merged.personalDetails, ...(value.personalDetails || {}) },
       careerObjective: { ...merged.careerObjective, ...(value.careerObjective || {}) },
-      activities: { ...merged.activities, ...(value.activities || {}) },
+      activities: (() => {
+        const raw = value.activities
+        if (Array.isArray(raw)) {
+          return raw.map((item) => ({ ...createActivityItem(), ...item }))
+        }
+        // Backward-compat: eski format { interests, memberships, volunteerWork }
+        if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+          const old = raw as { interests?: string; memberships?: string; volunteerWork?: string }
+          const items: ActivityItem[] = []
+          if (old.interests?.trim()) items.push({ ...createActivityItem(), category: 'İlgi alanları', description: old.interests })
+          if (old.memberships?.trim()) items.push({ ...createActivityItem(), category: 'Üyelikler', description: old.memberships })
+          if (old.volunteerWork?.trim()) items.push({ ...createActivityItem(), category: 'Faaliyetler / Gönüllülük', description: old.volunteerWork })
+          return items.length > 0 ? items : merged.activities
+        }
+        return merged.activities
+      })(),
       ats: { ...merged.ats, ...(value.ats || {}) },
       education: (value.education || merged.education).map((item) => ({
         ...createEducationItem(),
@@ -740,8 +762,7 @@ class CVStore extends Store {
   }
 
   hasActivities() {
-    const { interests, memberships, volunteerWork } = this.data.activities
-    return !isBlank(interests) || !isBlank(memberships) || !isBlank(volunteerWork)
+    return this.data.activities.some((item) => !isBlank(item.category) || !isBlank(item.description))
   }
 
   hasReferences() {

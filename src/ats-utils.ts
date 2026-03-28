@@ -75,10 +75,10 @@ export interface SkillLike {
   details: LocalizedValueLike
 }
 
-export interface ActivitiesLike {
-  interests: string
-  memberships: string
-  volunteerWork: string
+export interface ActivityItemLike {
+  id: string
+  category: string
+  description: string
 }
 
 export interface ReferenceLike {
@@ -109,7 +109,7 @@ export interface CVDataLike {
   languages: LanguageLike[]
   computerSkills: SkillLike[]
   otherSkills: SkillLike[]
-  activities: ActivitiesLike
+  activities: ActivityItemLike[]
   references: ReferenceLike[]
   referencesAvailableOnRequest: boolean
   ats: AtsSettingsLike
@@ -434,7 +434,7 @@ export const analyzeAts = (data: CVDataLike): AtsAuditResult => {
   if (data.referencesAvailableOnRequest || data.references.some((item) => item.fullName.trim() || item.organization.trim() || item.phone.trim() || item.email.trim())) {
     hiddenItems.push('references')
   }
-  if (data.activities.interests.trim() || data.activities.memberships.trim() || data.activities.volunteerWork.trim()) {
+  if (data.activities.some((item) => item.category.trim() || item.description.trim())) {
     hiddenItems.push('activities')
   }
 
