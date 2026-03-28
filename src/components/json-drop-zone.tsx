@@ -4,9 +4,13 @@ import cvStore from '../cv-store'
 export default class JsonDropZone extends Component {
   isDragOver = false
 
-  private handleFile(file: File | null | undefined) {
+  private async handleFile(file: File | null | undefined) {
     if (!file) return
-    cvStore.importFromFile(file)
+    const ok = await cvStore.importFromFile(file)
+    if (ok) {
+      cvStore.goToStep(0)
+      document.querySelector('.workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }
 
   onDragOver = (event: DragEvent) => {

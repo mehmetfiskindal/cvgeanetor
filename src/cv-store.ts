@@ -512,8 +512,8 @@ class CVStore extends Store {
     this.data.referencesAvailableOnRequest = value
   }
 
-  async importFromFile(file: File | null) {
-    if (!file) return
+  async importFromFile(file: File | null): Promise<boolean> {
+    if (!file) return false
 
     try {
       const text = (await file.text()).replace(/^\uFEFF/, '')
@@ -526,9 +526,11 @@ class CVStore extends Store {
         ;(this.data as Record<string, unknown>)[key] = (merged as Record<string, unknown>)[key]
       })
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
+      return true
     } catch (error) {
       console.error(error)
       this.setAlert('Dosya okunamadı. Lütfen geçerli bir JSON taslağı seç.', 'error')
+      return false
     }
   }
 
