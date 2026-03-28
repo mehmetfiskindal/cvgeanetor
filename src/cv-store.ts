@@ -278,6 +278,44 @@ const isBlank = (value: unknown) => typeof value !== 'string' || value.trim().le
 
 const hasLocalizedText = (value: LocalizedText) => !isBlank(value.tr) || !isBlank(value.en)
 
+const hasMojibakeMarkers = (value: string) => /[ÃÄÅÂ]/.test(value)
+
+const scoreReadableTurkishText = (value: string) => {
+  const turkishLetters = (value.match(/[ığüşöçİĞÜŞÖÇ]/g) || []).length
+  const mojibakeMarkers = (value.match(/[ÃÄÅÂ]/g) || []).length
+  return turkishLetters - mojibakeMarkers
+}
+
+const tryRecoverMojibake = (value: string) => {
+  if (!hasMojibakeMarkers(value)) return value
+
+  try {
+    const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0) & 0xff)
+    const recovered = new TextDecoder('utf-8', { fatal: false }).decode(bytes)
+    return scoreReadableTurkishText(recovered) > scoreReadableTurkishText(value) ? recovered : value
+  } catch {
+    return value
+  }
+}
+
+const normalizeImportedText = <T>(value: T): T => {
+  if (typeof value === 'string') {
+    return tryRecoverMojibake(value) as T
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeImportedText(item)) as T
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, entryValue]) => [key, normalizeImportedText(entryValue)]),
+    ) as T
+  }
+
+  return value
+}
+
 class CVStore extends Store {
   steps = STEP_META
   currentStep = 0
@@ -473,7 +511,8 @@ class CVStore extends Store {
     try {
       const text = await file.text()
       const parsed = JSON.parse(text) as Partial<CVData>
-      const merged = this.mergeWithDefaults(parsed)
+      const normalizedParsed = normalizeImportedText(parsed)
+      const merged = this.mergeWithDefaults(normalizedParsed)
       // Mevcut proxy üzerinden her field'ı ayrı ayrı güncelle;
       // this.data = newObj yapılırsa bileşenler eski proxy referansında kalır.
       ;(Object.keys(merged) as (keyof CVData)[]).forEach((key) => {
@@ -487,7 +526,7 @@ class CVStore extends Store {
   }
 
   exportToJson = () => {
-    const blob = new Blob([JSON.stringify(this.data, null, 2)], { type: 'application/json' })
+    const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
     anchor.href = url
