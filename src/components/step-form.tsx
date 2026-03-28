@@ -14,46 +14,49 @@ interface StepFormProps {
   stepCount: number
 }
 
+const show = { display: 'block' }
+const hide = { display: 'none' }
+
 export default function StepForm({ currentStep, stepCount }: StepFormProps) {
   return (
-    <section class="form-card">
-      <div style={currentStep === 0 ? 'display:block' : 'display:none'}>
+    <section className="form-card">
+      <div style={currentStep === 0 ? show : hide}>
         <StepContact />
       </div>
-      <div style={currentStep === 1 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 1 ? show : hide}>
         <StepObjective />
       </div>
-      <div style={currentStep === 2 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 2 ? show : hide}>
         <StepEducation />
       </div>
-      <div style={currentStep === 3 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 3 ? show : hide}>
         <StepExperience />
       </div>
-      <div style={currentStep === 4 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 4 ? show : hide}>
         <StepProjects />
       </div>
-      <div style={currentStep === 5 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 5 ? show : hide}>
         <StepSkills />
       </div>
-      <div style={currentStep === 6 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 6 ? show : hide}>
         <StepActivities />
       </div>
-      <div style={currentStep === 7 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 7 ? show : hide}>
         <StepReferences />
       </div>
-      <div style={currentStep === 8 ? 'display:block' : 'display:none'}>
+      <div style={currentStep === 8 ? show : hide}>
         <StepReview />
       </div>
 
-      <footer class="wizard-footer">
-        <button class="ghost-button" click={cvStore.prevStep} disabled={currentStep === 0}>
+      <footer className="wizard-footer">
+        <button className="ghost-button" click={cvStore.prevStep} disabled={currentStep === 0}>
           Geri
         </button>
-        <div class="footer-meta">
+        <div className="footer-meta">
           <span>
             Adım {currentStep + 1} / {stepCount}
           </span>
-          <button class="button" click={cvStore.nextStep} disabled={currentStep === stepCount - 1}>
+          <button className="button" click={cvStore.nextStep} disabled={currentStep === stepCount - 1}>
             İleri
           </button>
         </div>

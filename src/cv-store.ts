@@ -520,10 +520,19 @@ class CVStore extends Store {
       const parsed = JSON.parse(text) as Partial<CVData>
       const normalizedParsed = normalizeImportedText(parsed)
       const merged = this.mergeWithDefaults(normalizedParsed)
-      // Mevcut proxy üzerinden her field'ı ayrı ayrı güncelle;
-      // this.data = newObj yapılırsa bileşenler eski proxy referansında kalır.
+      // Mevcut proxy üzerinden her field'ı ayrı ayrı güncelle.
+      // Array alanlar için splice kullan: Gea'nın liste motoru ancak
+      // dizi-içi değişikliklerle (splice/push) tetiklenir, tam referans
+      // değiştirme (data[key] = newArr) liste bileşenlerini yeniden
+      // render etmez.
       ;(Object.keys(merged) as (keyof CVData)[]).forEach((key) => {
-        ;(this.data as Record<string, unknown>)[key] = (merged as Record<string, unknown>)[key]
+        const current = (this.data as Record<string, unknown>)[key]
+        const next = (merged as Record<string, unknown>)[key]
+        if (Array.isArray(current) && Array.isArray(next)) {
+          ;(current as unknown[]).splice(0, current.length, ...next)
+        } else {
+          ;(this.data as Record<string, unknown>)[key] = next
+        }
       })
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
       return true

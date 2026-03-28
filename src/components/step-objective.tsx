@@ -18,17 +18,17 @@ export default function StepObjective() {
         <label class="field">
           <span>Summary (TR)</span>
           <textarea
-            rows="4"
+            rows={4}
             value={careerObjective.tr}
-            input={(event: Event) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'tr', (event.target as HTMLTextAreaElement).value)}
+            onInput={(event: InputEvent) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'tr', (event.target as HTMLTextAreaElement).value)}
           />
         </label>
         <label class="field">
           <span>Summary (EN)</span>
           <textarea
-            rows="4"
+            rows={4}
             value={careerObjective.en}
-            input={(event: Event) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'en', (event.target as HTMLTextAreaElement).value)}
+            onInput={(event: InputEvent) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'en', (event.target as HTMLTextAreaElement).value)}
           />
         </label>
       </div>
