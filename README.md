@@ -79,6 +79,18 @@ git push origin main
 npm run build
 ```
 
+## GitHub Pages ile Otomatik Yayin
+
+Bu proje icin `.github/workflows/deploy-pages.yml` dosyasi eklendi.
+
+1. Kodu `main` dalina push edin.
+2. GitHub repo ayarlarinda **Settings > Pages > Build and deployment** bolumunde **Source = GitHub Actions** secin.
+3. `Actions` sekmesinde `Deploy to GitHub Pages` workflow'unun basarili calistigini dogrulayin.
+
+Yayin adresi genel olarak su formatta olur:
+
+- `https://<kullanici-adi>.github.io/cvgeanetor/`
+
 ## Katki
 
 Pull request'ler memnuniyetle kabul edilir. Buyuk degisiklikler icin once bir issue acip neyi degistirmek istediginizi tartisabilirsiniz.
