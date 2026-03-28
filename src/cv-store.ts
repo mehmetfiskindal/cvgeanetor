@@ -280,40 +280,6 @@ const isBlank = (value: unknown) => typeof value !== 'string' || value.trim().le
 
 const hasLocalizedText = (value: LocalizedText) => !isBlank(value.tr) || !isBlank(value.en)
 
-const asRecord = (value: unknown): Record<string, unknown> => (value && typeof value === 'object' ? (value as Record<string, unknown>) : {})
-
-const pickString = (source: Record<string, unknown>, keys: string[]) => {
-  for (const key of keys) {
-    const value = source[key]
-    if (typeof value === 'string' && value.trim()) return value.trim()
-  }
-  return ''
-}
-
-const toLocalizedText = (value: unknown): LocalizedText => {
-  if (typeof value === 'string') return createLocalizedText(value)
-
-  const source = asRecord(value)
-  return createLocalizedText(
-    pickString(source, ['tr', 'turkish', 'textTr', 'valueTr']),
-    pickString(source, ['en', 'english', 'textEn', 'valueEn']),
-  )
-}
-
-const toArray = <T>(value: unknown): T[] => {
-  if (Array.isArray(value)) return value as T[]
-  if (value && typeof value === 'object') return [value as T]
-  return []
-}
-
-const readLegacyArray = <T>(source: Record<string, unknown>, keys: string[]) => {
-  for (const key of keys) {
-    const entries = toArray<T>(source[key])
-    if (entries.length > 0) return entries
-  }
-  return []
-}
-
 const hasMojibakeMarkers = (value: string) => /[ÃÄÅÂ]/.test(value)
 
 const scoreReadableTurkishText = (value: string) => {
@@ -552,26 +518,54 @@ class CVStore extends Store {
     try {
       const text = (await file.text()).replace(/^\uFEFF/, '')
       const parsed = JSON.parse(text) as Partial<CVData>
+      console.log('[IMPORT] Parsed experience count:', parsed.experience?.length)
+
       const normalizedParsed = normalizeImportedText(parsed)
+      console.log('[IMPORT] After normalization, experience count:', normalizedParsed.experience?.length)
+      if (normalizedParsed.experience?.[0]) {
+        const exp = normalizedParsed.experience[0]
+        console.log('[IMPORT] Normalized[0] title:', exp.title)
+        console.log('[IMPORT] Normalized[0] company:', exp.company)
+      }
+
       const merged = this.mergeWithDefaults(normalizedParsed)
-      // Mevcut proxy üzerinden her field'ı ayrı ayrı güncelle.
-      // Array alanlar için splice kullan: Gea'nın liste motoru ancak
-      // dizi-içi değişikliklerle (splice/push) tetiklenir, tam referans
-      // değiştirme (data[key] = newArr) liste bileşenlerini yeniden
-      // render etmez.
-      ;(Object.keys(merged) as (keyof CVData)[]).forEach((key) => {
-        const current = (this.data as Record<string, unknown>)[key]
-        const next = (merged as Record<string, unknown>)[key]
-        if (Array.isArray(current) && Array.isArray(next)) {
-          ;(current as unknown[]).splice(0, current.length, ...next)
-        } else {
-          ;(this.data as Record<string, unknown>)[key] = next
-        }
-      })
+      console.log('[IMPORT] After merge, experience count:', merged.experience.length)
+      if (merged.experience?.[0]) {
+        const exp = merged.experience[0]
+        console.log('[IMPORT] Merged[0] title:', exp.title)
+        console.log('[IMPORT] Merged[0] company:', exp.company)
+      }
+
+      // Update arrays using splice to trigger proper list updates in Gea
+      // Clear existing items
+      this.data.experience.splice(0, this.data.experience.length, ...merged.experience)
+      this.data.internships.splice(0, this.data.internships.length, ...merged.internships)
+      this.data.education.splice(0, this.data.education.length, ...merged.education)
+      this.data.projects.splice(0, this.data.projects.length, ...merged.projects)
+      this.data.languages.splice(0, this.data.languages.length, ...merged.languages)
+      this.data.computerSkills.splice(0, this.data.computerSkills.length, ...merged.computerSkills)
+      this.data.otherSkills.splice(0, this.data.otherSkills.length, ...merged.otherSkills)
+      this.data.trainings.splice(0, this.data.trainings.length, ...merged.trainings)
+      this.data.coursesOrCongresses.splice(0, this.data.coursesOrCongresses.length, ...merged.coursesOrCongresses)
+      this.data.references.splice(0, this.data.references.length, ...merged.references)
+      this.data.activities.splice(0, this.data.activities.length, ...merged.activities)
+
+      // Update scalar fields
+      this.data.contact = merged.contact
+      this.data.personalDetails = merged.personalDetails
+      this.data.careerObjective = merged.careerObjective
+      this.data.ats = merged.ats
+
+      if (this.data.experience?.[0]) {
+        const exp = this.data.experience[0]
+        console.log('[IMPORT] After store title:', exp.title)
+        console.log('[IMPORT] After store company:', exp.company)
+      }
+
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
       return true
     } catch (error) {
-      console.error(error)
+      console.error('[IMPORT] Error:', error)
       this.setAlert('Dosya okunamadı. Lütfen geçerli bir JSON taslağı seç.', 'error')
       return false
     }
@@ -730,23 +724,6 @@ class CVStore extends Store {
 
   mergeWithDefaults(value: Partial<CVData>) {
     const merged = cloneDefaultData()
-    const legacy = value as Partial<CVData> & Record<string, unknown>
-    const educationEntries =
-      value.education && value.education.length > 0
-        ? value.education
-        : readLegacyArray<Record<string, unknown>>(legacy, ['egitim', 'egitimBilgileri', 'educations', 'educationInfo'])
-    const experienceEntries =
-      value.experience && value.experience.length > 0
-        ? value.experience
-        : readLegacyArray<Record<string, unknown>>(legacy, ['workExperience', 'workExperiences', 'isDeneyimi', 'deneyim'])
-    const internshipEntries =
-      value.internships && value.internships.length > 0
-        ? value.internships
-        : readLegacyArray<Record<string, unknown>>(legacy, ['internship', 'internships', 'staj', 'stajlar'])
-    const projectEntries =
-      value.projects && value.projects.length > 0
-        ? value.projects
-        : readLegacyArray<Record<string, unknown>>(legacy, ['project', 'projects', 'projeler', 'projectList'])
     return {
       ...merged,
       ...value,
@@ -770,66 +747,40 @@ class CVStore extends Store {
         return merged.activities
       })(),
       ats: { ...merged.ats, ...(value.ats || {}) },
-      education: (educationEntries.length > 0 ? educationEntries : merged.education).map((item) => {
-        const source = asRecord(item)
-        return {
-          ...createEducationItem(),
-          ...item,
-          school: pickString(source, ['school', 'university', 'institution', 'name', 'okul']),
-          faculty: pickString(source, ['faculty', 'fakulte']),
-          department: pickString(source, ['department', 'major', 'bolum']),
-          degree: pickString(source, ['degree', 'diploma', 'educationLevel', 'seviye']),
-          startDate: pickString(source, ['startDate', 'start', 'from', 'baslangicTarihi']),
-          endDate: pickString(source, ['endDate', 'end', 'to', 'bitisTarihi']),
-          gpa: pickString(source, ['gpa', 'grade', 'notOrtalamasi']),
-          notes: toLocalizedText(source.notes ?? source.description ?? source.details ?? source.aciklama),
-        }
-      }),
+      education: (value.education || merged.education).map((item) => ({
+        ...createEducationItem(),
+        ...item,
+        notes: { ...createLocalizedText(), ...(item.notes || {}) },
+      })),
       trainings: (value.trainings || merged.trainings).map((item) => ({ ...createTrainingItem(), ...item })),
       coursesOrCongresses: (value.coursesOrCongresses || merged.coursesOrCongresses).map((item) => ({
         ...createCongressItem(),
         ...item,
       })),
-      experience: (experienceEntries.length > 0 ? experienceEntries : merged.experience).map((item) => {
-        const source = asRecord(item)
-        return {
-          ...createExperienceItem(),
+      experience: (value.experience || merged.experience).map((item, idx) => {
+        const created = createExperienceItem()
+        const result = {
+          ...created,
           ...item,
-          company: pickString(source, ['company', 'companyName', 'organization', 'employer', 'kurum']),
-          title: pickString(source, ['title', 'position', 'role', 'unvan']),
-          startDate: pickString(source, ['startDate', 'start', 'from', 'baslangicTarihi']),
-          endDate: pickString(source, ['endDate', 'end', 'to', 'bitisTarihi']),
-          location: pickString(source, ['location', 'city', 'lokasyon']),
-          bullets: toLocalizedText(source.bullets ?? source.description ?? source.responsibilities ?? source.tasks ?? source.aciklama),
+          bullets: { ...createLocalizedText(), ...(item.bullets || {}) },
         }
-      }),
-      internships: (internshipEntries.length > 0 ? internshipEntries : merged.internships).map((item) => {
-        const source = asRecord(item)
-        return {
-          ...createExperienceItem(),
-          ...item,
-          company: pickString(source, ['company', 'companyName', 'organization', 'employer', 'kurum']),
-          title: pickString(source, ['title', 'position', 'role', 'unvan']),
-          startDate: pickString(source, ['startDate', 'start', 'from', 'baslangicTarihi']),
-          endDate: pickString(source, ['endDate', 'end', 'to', 'bitisTarihi']),
-          location: pickString(source, ['location', 'city', 'lokasyon']),
-          bullets: toLocalizedText(source.bullets ?? source.description ?? source.responsibilities ?? source.tasks ?? source.aciklama),
+        if (typeof window !== 'undefined' && idx === 0) {
+          console.log('[MERGE] item keys:', Object.keys(item))
+          console.log('[MERGE] input item:', JSON.stringify({ title: item.title, company: item.company, location: item.location }))
+          console.log('[MERGE] result item:', JSON.stringify({ title: result.title, company: result.company, location: result.location }))
         }
+        return result
       }),
-      projects: (projectEntries.length > 0 ? projectEntries : merged.projects).map((item) => {
-        const source = asRecord(item)
-        return {
-          ...createProjectItem(),
-          ...item,
-          name: pickString(source, ['name', 'projectName', 'title', 'projeAdi']),
-          role: pickString(source, ['role', 'position', 'gorev']),
-          startDate: pickString(source, ['startDate', 'start', 'from', 'baslangicTarihi']),
-          endDate: pickString(source, ['endDate', 'end', 'to', 'bitisTarihi']),
-          url: pickString(source, ['url', 'link', 'demo', 'github']),
-          keywords: pickString(source, ['keywords', 'techStack', 'stack', 'technologies', 'anahtarKelimeler']),
-          bullets: toLocalizedText(source.bullets ?? source.description ?? source.contributions ?? source.aciklama),
-        }
-      }),
+      internships: (value.internships || merged.internships).map((item) => ({
+        ...createExperienceItem(),
+        ...item,
+        bullets: { ...createLocalizedText(), ...(item.bullets || {}) },
+      })),
+      projects: (value.projects || merged.projects).map((item) => ({
+        ...createProjectItem(),
+        ...item,
+        bullets: { ...createLocalizedText(), ...(item.bullets || {}) },
+      })),
       languages: (value.languages || merged.languages).map((item) => ({
         ...createLanguageItem(),
         ...item,
