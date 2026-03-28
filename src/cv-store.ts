@@ -473,7 +473,12 @@ class CVStore extends Store {
     try {
       const text = await file.text()
       const parsed = JSON.parse(text) as Partial<CVData>
-      this.data = this.mergeWithDefaults(parsed)
+      const merged = this.mergeWithDefaults(parsed)
+      // Mevcut proxy üzerinden her field'ı ayrı ayrı güncelle;
+      // this.data = newObj yapılırsa bileşenler eski proxy referansında kalır.
+      ;(Object.keys(merged) as (keyof CVData)[]).forEach((key) => {
+        ;(this.data as Record<string, unknown>)[key] = (merged as Record<string, unknown>)[key]
+      })
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
     } catch (error) {
       console.error(error)
