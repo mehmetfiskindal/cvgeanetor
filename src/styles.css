@@ -95,6 +95,15 @@ img {
   background: rgba(223, 243, 239, 0.7);
 }
 
+.drop-zone-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
 .drop-zone-hidden-input {
   display: none !important;
 }

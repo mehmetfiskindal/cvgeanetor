@@ -63,13 +63,13 @@ export default function StepContact() {
       <label class="checkbox-field">
         <input
           type="checkbox"
-          checked={personalDetails.showOptionalDetails}
+          checked={cvStore.data.personalDetails.showOptionalDetails}
           change={(event: Event) => cvStore.updatePersonalDetails('showOptionalDetails', (event.target as HTMLInputElement).checked)}
         />
         <span>Ek kişisel bilgi alanlarını göster</span>
       </label>
 
-      {personalDetails.showOptionalDetails && (
+      {cvStore.data.personalDetails.showOptionalDetails && (
         <div class="entry-card">
           <div class="grid two-col">
             <label class="field">
