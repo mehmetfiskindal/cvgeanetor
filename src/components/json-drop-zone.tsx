@@ -40,9 +40,8 @@ export default class JsonDropZone extends Component {
         dragleave={this.onDragLeave}
         drop={this.onDrop}
       >
-        <label class="drop-zone-label" for={`${this.id}-input`}>
+        <label class="drop-zone-label">
           <input
-            id={`${this.id}-input`}
             type="file"
             accept="application/json"
             class="drop-zone-hidden-input"

@@ -105,7 +105,11 @@ img {
 }
 
 .drop-zone-hidden-input {
-  display: none !important;
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
 }
 
 .drop-zone-icon {
