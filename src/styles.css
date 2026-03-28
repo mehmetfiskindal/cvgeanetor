@@ -74,6 +74,56 @@ img {
   box-shadow: var(--shadow);
 }
 
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 24px;
+  border: 2px dashed rgba(15, 118, 110, 0.35);
+  border-radius: 20px;
+  background: rgba(223, 243, 239, 0.35);
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+  max-width: 360px;
+}
+
+.drop-zone--over {
+  border-color: var(--accent);
+  background: rgba(223, 243, 239, 0.7);
+}
+
+.drop-zone-hidden-input {
+  display: none !important;
+}
+
+.drop-zone-icon {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.drop-zone-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+  text-align: center;
+}
+
+.drop-zone-sub {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.drop-zone-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 .hero-card {
   padding: 28px;
   display: grid;

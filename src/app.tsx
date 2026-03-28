@@ -1,6 +1,7 @@
 import { Component } from '@geajs/core'
 import AtsPrintPreview from './components/ats-print-preview'
 import CVPreview from './components/cv-preview'
+import JsonDropZone from './components/json-drop-zone'
 import StepForm from './components/step-form'
 import StepSidebar from './components/step-sidebar'
 import cvStore from './cv-store'
@@ -18,6 +19,7 @@ export default class App extends Component {
             Formu adım adım doldur, anahtar kelime eşleşmelerini gör, ATS risklerini denetle ve tek sütun yazdırma
             görünümü ile PDF al.
           </p>
+          <JsonDropZone />
         </section>
 
         {cvStore.alert.message && (
