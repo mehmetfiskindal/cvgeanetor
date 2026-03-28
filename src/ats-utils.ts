@@ -434,7 +434,10 @@ export const analyzeAts = (data: CVDataLike): AtsAuditResult => {
   if (data.referencesAvailableOnRequest || data.references.some((item) => item.fullName.trim() || item.organization.trim() || item.phone.trim() || item.email.trim())) {
     hiddenItems.push('references')
   }
-  if (data.activities.some((item) => item.category.trim() || item.description.trim())) {
+  const hasActivities =
+    Array.isArray(data.activities) &&
+    data.activities.some((item) => item.category.trim() || item.description.trim())
+  if (hasActivities) {
     hiddenItems.push('activities')
   }
 
