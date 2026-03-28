@@ -5,11 +5,11 @@ export default function StepReferences() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
+          <p class="eyebrow">Form alanı</p>
           <h2>Referanslar</h2>
-          <p class="section-copy">Referans ekleyebilir ya da bu bolum yerine talep edildiginde paylasilacagini belirtebilirsin. ATS yazdirma ciktisinda bu bolum varsayilan olarak gizlenir.</p>
+          <p class="section-copy">Referans ekleyebilir ya da bu bölüm yerine talep edildiğinde paylaşılacağını belirtebilirsin. ATS yazdırma çıktısında bu bölüm varsayılan olarak gizlenir.</p>
         </div>
-        <p class="hint-chip">Referans kisi bilgileri paylasilmadan once izin alinmali.</p>
+        <p class="hint-chip">Referans kişi bilgileri paylaşılmadan önce izin alınmalı.</p>
       </header>
 
       <label class="checkbox-field">
@@ -18,7 +18,7 @@ export default function StepReferences() {
           checked={cvStore.data.referencesAvailableOnRequest}
           change={(event: Event) => cvStore.setReferencesAvailableOnRequest((event.target as HTMLInputElement).checked)}
         />
-        <span>Referanslar talep edildiginde paylasilsin</span>
+        <span>Referanslar talep edildiğinde paylaşılsın</span>
       </label>
 
       {!cvStore.data.referencesAvailableOnRequest && (
@@ -50,7 +50,7 @@ export default function StepReferences() {
 
               <div class="entry-actions">
                 <button class="ghost-button" click={() => cvStore.removeReference(item.id)}>
-                  Kaydi kaldir
+                  Kaydı kaldır
                 </button>
               </div>
             </article>

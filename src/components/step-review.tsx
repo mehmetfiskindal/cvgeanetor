@@ -15,10 +15,10 @@ export default function StepReview() {
       <header class="form-header">
         <div>
           <p class="eyebrow">ATS paneli</p>
-          <h2>ATS kontrolu, anahtar kelimeler ve PDF yazdirma</h2>
-          <p class="section-copy">Hedef unvan ve ilan metnini gir, eksikleri gor ve tek sutun ATS yazdirma gorunumunu PDF olarak kaydet.</p>
+          <h2>ATS kontrolü, anahtar kelimeler ve PDF yazdırma</h2>
+          <p class="section-copy">Hedef unvan ve ilan metnini gir, eksikleri gör ve tek sütun ATS yazdırma görünümünü PDF olarak kaydet.</p>
         </div>
-        <p class="hint-chip">Yazdirma gorunumu fotografi, referanslari ve opsiyonel kisisel bilgileri otomatik gizler.</p>
+        <p class="hint-chip">Yazdırma görünümü fotoğrafı, referansları ve opsiyonel kişisel bilgileri otomatik gizler.</p>
       </header>
 
       <div class="grid two-col">
@@ -62,13 +62,13 @@ export default function StepReview() {
 
         <article class="summary-card">
           <p>
-            Tamamlanma orani: <strong>%{cvStore.completionRatio}</strong>
+            Tamamlanma oranı: <strong>%{cvStore.completionRatio}</strong>
           </p>
           <ul>
-            <li>Iletisim: {cvStore.hasContactInfo() ? 'Hazir' : 'Eksik'}</li>
-            <li>Professional Summary: {cvStore.hasCareerObjective() ? 'Hazir' : 'Eksik'}</li>
-            <li>Deneyim: {cvStore.sortedExperience.some((item) => item.company || item.title) ? 'Hazir' : 'Eksik'}</li>
-            <li>Projeler: {cvStore.hasProjects() ? 'Hazir' : 'Eksik'}</li>
+            <li>İletişim: {cvStore.hasContactInfo() ? 'Hazır' : 'Eksik'}</li>
+            <li>Professional Summary: {cvStore.hasCareerObjective() ? 'Hazır' : 'Eksik'}</li>
+            <li>Deneyim: {cvStore.sortedExperience.some((item) => item.company || item.title) ? 'Hazır' : 'Eksik'}</li>
+            <li>Projeler: {cvStore.hasProjects() ? 'Hazır' : 'Eksik'}</li>
           </ul>
         </article>
       </div>
@@ -85,7 +85,7 @@ export default function StepReview() {
               ))}
             </div>
           ) : (
-            <p class="preview-note">Heniz eslesen keyword bulunmadi.</p>
+            <p class="preview-note">Henüz eşleşen keyword bulunamadı.</p>
           )}
         </article>
 
@@ -100,7 +100,7 @@ export default function StepReview() {
               ))}
             </div>
           ) : (
-            <p class="preview-note">Eksik keyword yok ya da ilan metni henuz girilmedi.</p>
+            <p class="preview-note">Eksik keyword yok ya da ilan metni henüz girilmedi.</p>
           )}
         </article>
       </div>
@@ -117,28 +117,28 @@ export default function StepReview() {
             ))}
           </div>
         ) : (
-          <p class="preview-note">Acil bir ATS bulgusu yok. Print layout PDF icin hazir gorunuyor.</p>
+          <p class="preview-note">Acil bir ATS bulgusu yok. Print layout PDF için hazır görünüyor.</p>
         )}
       </article>
 
       <label class="field">
-        <span>JSON taslagi ice aktar</span>
+        <span>JSON taslağı içe aktar</span>
         <input type="file" accept="application/json" change={(event: Event) => cvStore.importFromFile((event.target as HTMLInputElement).files?.[0] || null)} />
       </label>
 
       <div class="action-row action-row-wrap">
         <button class="button" click={cvStore.printAtsCv}>
-          ATS PDF olarak yazdir
+          ATS PDF olarak yazdır
         </button>
         <button class="ghost-button" click={cvStore.exportToJson}>
-          JSON olarak disa aktar
+          JSON olarak dışa aktar
         </button>
       </div>
 
       <div class="ats-preview-wrapper">
         <div class="preview-toolbar">
-          <p class="eyebrow">ATS yazdirma onizlemesi</p>
-          <span class="preview-note">Tek sutun, standart basliklar, sade metin odakli</span>
+          <p class="eyebrow">ATS yazdırma önizlemesi</p>
+          <span class="preview-note">Tek sütun, standart başlıklar, sade metin odaklı</span>
         </div>
         <AtsPrintPreview />
       </div>

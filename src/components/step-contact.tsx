@@ -7,11 +7,11 @@ export default function StepContact() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
-          <h2>Kisisel ve iletisim bilgileri</h2>
-          <p class="section-copy">CV'nin en ustunde yer alacak iletisim bilgilerini tamamla. Ek kisisel bilgiler varsayilan olarak kapali.</p>
+          <p class="eyebrow">Form alanı</p>
+          <h2>Kişisel ve iletişim bilgileri</h2>
+          <p class="section-copy">CV'nin en üstünde yer alacak iletişim bilgilerini tamamla. Ek kişisel bilgiler varsayılan olarak kapalı.</p>
         </div>
-        <p class="hint-chip">Fotograf ve ek kisisel bilgiler kayitta kalir ama ATS yazdirma ciktisinda gizlenir.</p>
+        <p class="hint-chip">Fotoğraf ve ek kişisel bilgiler kayıtta kalır ama ATS yazdırma çıktısında gizlenir.</p>
       </header>
 
       <div class="grid two-col">
@@ -28,13 +28,13 @@ export default function StepContact() {
           <input value={contact.phone} input={(event: Event) => cvStore.updateContact('phone', (event.target as HTMLInputElement).value)} />
         </label>
         <label class="field">
-          <span>Sehir</span>
+          <span>Şehir</span>
           <input value={contact.city} input={(event: Event) => cvStore.updateContact('city', (event.target as HTMLInputElement).value)} />
         </label>
       </div>
 
       <label class="field">
-        <span>Acik adres</span>
+        <span>Açık adres</span>
         <textarea rows="3" value={contact.address} input={(event: Event) => cvStore.updateContact('address', (event.target as HTMLTextAreaElement).value)} />
       </label>
 
@@ -50,13 +50,13 @@ export default function StepContact() {
       </div>
 
       <label class="field">
-        <span>Fotograf</span>
+        <span>Fotoğraf</span>
         <input type="file" accept="image/*" change={(event: Event) => cvStore.setPhotoFromFile((event.target as HTMLInputElement).files?.[0] || null)} />
       </label>
 
       {contact.photoDataUrl && (
         <button class="ghost-button" click={cvStore.removePhoto}>
-          Fotografi kaldir
+          Fotoğrafı kaldır
         </button>
       )}
 
@@ -66,7 +66,7 @@ export default function StepContact() {
           checked={personalDetails.showOptionalDetails}
           change={(event: Event) => cvStore.updatePersonalDetails('showOptionalDetails', (event.target as HTMLInputElement).checked)}
         />
-        <span>Ek kisisel bilgi alanlarini goster</span>
+        <span>Ek kişisel bilgi alanlarını göster</span>
       </label>
 
       {personalDetails.showOptionalDetails && (
@@ -81,11 +81,11 @@ export default function StepContact() {
               <input value={personalDetails.gender} input={(event: Event) => cvStore.updatePersonalDetails('gender', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Dogum yeri</span>
+              <span>Doğum yeri</span>
               <input value={personalDetails.birthPlace} input={(event: Event) => cvStore.updatePersonalDetails('birthPlace', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Dogum tarihi</span>
+              <span>Doğum tarihi</span>
               <input value={personalDetails.birthDate} input={(event: Event) => cvStore.updatePersonalDetails('birthDate', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">

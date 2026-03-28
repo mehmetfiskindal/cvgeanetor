@@ -51,10 +51,10 @@ export default function StepForm({ currentStep, stepCount }: StepFormProps) {
         </button>
         <div class="footer-meta">
           <span>
-            Adim {currentStep + 1} / {stepCount}
+            Adım {currentStep + 1} / {stepCount}
           </span>
           <button class="button" click={cvStore.nextStep} disabled={currentStep === stepCount - 1}>
-            Ileri
+            İleri
           </button>
         </div>
       </footer>

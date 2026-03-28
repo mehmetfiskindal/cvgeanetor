@@ -140,15 +140,15 @@ export interface StepMeta {
 }
 
 const STEP_META: StepMeta[] = [
-  { id: 0, title: 'Kisisel ve iletisim', description: 'Isim, iletisim ve istege bagli ek bilgiler.' },
-  { id: 1, title: 'Professional Summary', description: 'Hedef role uygun, ATS dostu ozet yaz.' },
-  { id: 2, title: 'Egitim bilgileri', description: 'Ters kronolojik sirayla okul, egitim ve kongreler.' },
-  { id: 3, title: 'Is deneyimi', description: 'Deneyimleri olculebilir bullet satirlariyla gir.' },
-  { id: 4, title: 'Projeler', description: 'Yayina alinmis urunleri, stack ve etkileriyle ekle.' },
-  { id: 5, title: 'Beceriler', description: 'Tech stack, diller ve diger yetkinlikleri grupla.' },
-  { id: 6, title: 'Faaliyetler', description: 'Istege bagli ilgiler, uyelikler ve gonulluluk.' },
-  { id: 7, title: 'Referanslar', description: 'Veride kalsin ama ATS baskida gizli olsun.' },
-  { id: 8, title: 'ATS kontrol', description: 'Skoru incele, eksikleri gor ve PDF olarak yazdir.' },
+  { id: 0, title: 'Kişisel ve iletişim', description: 'İsim, iletişim ve isteğe bağlı ek bilgiler.' },
+  { id: 1, title: 'Profesyonel Özet', description: 'Hedef role uygun, ATS dostu özet yaz.' },
+  { id: 2, title: 'Eğitim bilgileri', description: 'Ters kronolojik sırayla okul, eğitim ve kongreler.' },
+  { id: 3, title: 'İş deneyimi', description: 'Deneyimleri ölçülebilir bullet satırlarıyla gir.' },
+  { id: 4, title: 'Projeler', description: 'Yayına alınmış ürünleri, stack ve etkileriyle ekle.' },
+  { id: 5, title: 'Beceriler', description: 'Tech stack, diller ve diğer yetkinlikleri grupla.' },
+  { id: 6, title: 'Faaliyetler', description: 'İsteğe bağlı ilgiler, üyelikler ve gönüllülük.' },
+  { id: 7, title: 'Referanslar', description: 'Veride kalsın ama ATS baskıda gizli olsun.' },
+  { id: 8, title: 'ATS kontrol', description: 'Skoru incele, eksikleri gör ve PDF olarak yazdır.' },
 ]
 
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -474,10 +474,10 @@ class CVStore extends Store {
       const text = await file.text()
       const parsed = JSON.parse(text) as Partial<CVData>
       this.data = this.mergeWithDefaults(parsed)
-      this.setAlert('Taslak basariyla ice aktarildi.', 'success')
+      this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
     } catch (error) {
       console.error(error)
-      this.setAlert('Dosya okunamadi. Lutfen gecerli bir JSON taslagi sec.', 'error')
+      this.setAlert('Dosya okunamadı. Lütfen geçerli bir JSON taslağı seç.', 'error')
     }
   }
 
@@ -601,7 +601,7 @@ class CVStore extends Store {
     const printWindow = window.open('', '_blank')
     if (!printWindow) {
       window.print()
-      this.setAlert('Pop-up engellendi. Tarayici yazdirma gorunumu acildi, tekrar deneyebilirsin.', 'error')
+      this.setAlert('Pop-up engellendi. Tarayıcı yazdırma görünümü açıldı, tekrar deneyebilirsin.', 'error')
       return
     }
 
@@ -610,7 +610,7 @@ class CVStore extends Store {
     printWindow.document.close()
     printWindow.focus()
     printWindow.print()
-    this.setAlert('ATS PDF yazdirma dokumani olusturuldu. Onizleme ile ayni bolumler kullanilarak yazdiriliyor.', 'success')
+    this.setAlert('ATS PDF yazdırma dokümanı oluşturuldu. Önizleme ile aynı bölümler kullanılarak yazdırılıyor.', 'success')
   }
 
   setPhotoFromFile = async (file: File | null) => {
@@ -624,7 +624,7 @@ class CVStore extends Store {
       reader.readAsDataURL(file)
     } catch (error) {
       console.error(error)
-      this.setAlert('Fotograf yuklenemedi.', 'error')
+      this.setAlert('Fotoğraf yüklenemedi.', 'error')
     }
   }
 

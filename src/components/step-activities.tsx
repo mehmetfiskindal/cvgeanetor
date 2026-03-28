@@ -7,25 +7,25 @@ export default function StepActivities() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
-          <h2>Ilgi alanlari, uyelikler ve faaliyetler</h2>
-          <p class="section-copy">Siradan hobi listesi yerine seni ayristiran ilgi alanlari, topluluklar ve gonullu calismalari yaz. ATS yazdirma ciktisinda bu alanlar varsayilan olarak yer almaz.</p>
+          <p class="eyebrow">Form alanı</p>
+          <h2>İlgi alanları, üyelikler ve faaliyetler</h2>
+          <p class="section-copy">Sıradan hobi listesi yerine seni ayrıştıran ilgi alanları, topluluklar ve gönüllü çalışmaları yaz. ATS yazdırma çıktısında bu alanlar varsayılan olarak yer almaz.</p>
         </div>
-        <p class="hint-chip">Pozisyonla ilgili faaliyetleri oncele.</p>
+        <p class="hint-chip">Pozisyonla ilgili faaliyetleri öncele.</p>
       </header>
 
       <label class="field">
-        <span>Ilgi alanlari</span>
+        <span>İlgi alanları</span>
         <textarea rows="4" value={activities.interests} input={(event: Event) => cvStore.updateActivities('interests', (event.target as HTMLTextAreaElement).value)} />
       </label>
 
       <label class="field">
-        <span>Uyelikler</span>
+        <span>Üyelikler</span>
         <textarea rows="4" value={activities.memberships} input={(event: Event) => cvStore.updateActivities('memberships', (event.target as HTMLTextAreaElement).value)} />
       </label>
 
       <label class="field">
-        <span>Faaliyetler / gonulluluk</span>
+        <span>Faaliyetler / gönüllülük</span>
         <textarea rows="4" value={activities.volunteerWork} input={(event: Event) => cvStore.updateActivities('volunteerWork', (event.target as HTMLTextAreaElement).value)} />
       </label>
     </div>

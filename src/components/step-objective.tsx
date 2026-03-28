@@ -7,11 +7,11 @@ export default function StepObjective() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
+          <p class="eyebrow">Form alanı</p>
           <h2>Professional Summary</h2>
-          <p class="section-copy">Basvurdugun pozisyonla uyumlu, kisa ve acik bir ozet yaz. ATS icin hedef role uygun anahtar kelimeleri dogal sekilde kullan.</p>
+          <p class="section-copy">Başvurduğun pozisyonla uyumlu, kısa ve açık bir özet yaz. ATS için hedef role uygun anahtar kelimeleri doğal şekilde kullan.</p>
         </div>
-        <p class="hint-chip">2-4 cumle idealdir.</p>
+        <p class="hint-chip">2-4 cümle idealdir.</p>
       </header>
 
       <div class="grid two-col">

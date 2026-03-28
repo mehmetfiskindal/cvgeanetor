@@ -5,11 +5,11 @@ export default function StepEducation() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
-          <h2>Egitim bilgileri</h2>
-          <p class="section-copy">Okul bilgilerini ters kronolojik sirayla gir. Alinan egitimler ve kongreleri ayri kartlar halinde ekleyebilirsin.</p>
+          <p class="eyebrow">Form alanı</p>
+          <h2>Eğitim bilgileri</h2>
+          <p class="section-copy">Okul bilgilerini ters kronolojik sırayla gir. Alınan eğitimler ve kongreleri ayrı kartlar halinde ekleyebilirsin.</p>
         </div>
-        <p class="hint-chip">Yeni mezunsan ilgili dersleri ve basarilari notlarda belirt.</p>
+        <p class="hint-chip">Yeni mezunsan ilgili dersleri ve başarıları notlarda belirt.</p>
       </header>
 
       {cvStore.data.education.map((item) => (
@@ -24,25 +24,25 @@ export default function StepEducation() {
               <input value={item.degree} input={(event: Event) => (item.degree = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Fakulte</span>
+              <span>Fakülte</span>
               <input value={item.faculty} input={(event: Event) => (item.faculty = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Bolum</span>
+              <span>Bölüm</span>
               <input value={item.department} input={(event: Event) => (item.department = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Baslangic</span>
+              <span>Başlangıç</span>
               <input type="month" value={item.startDate} input={(event: Event) => (item.startDate = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Bitis</span>
+              <span>Bitiş</span>
               <input type="month" value={item.endDate} input={(event: Event) => (item.endDate = (event.target as HTMLInputElement).value)} />
             </label>
           </div>
 
           <label class="field">
-            <span>Genel not ortalamasi</span>
+            <span>Genel not ortalaması</span>
             <input value={item.gpa} input={(event: Event) => (item.gpa = (event.target as HTMLInputElement).value)} />
           </label>
 
@@ -59,21 +59,21 @@ export default function StepEducation() {
 
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeEducation(item.id)}>
-              Kaydi kaldir
+              Kaydı kaldır
             </button>
           </div>
         </article>
       ))}
       <button class="button" click={cvStore.addEducation}>
-        Egitim kaydi ekle
+        Eğitim kaydı ekle
       </button>
 
-      <h3 class="subsection-title">Alinan egitimler</h3>
+      <h3 class="subsection-title">Alınan eğitimler</h3>
       {cvStore.data.trainings.map((item) => (
         <article class="entry-card" key={item.id}>
           <div class="grid two-col">
             <label class="field">
-              <span>Egitim</span>
+              <span>Eğitim</span>
               <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
@@ -85,19 +85,19 @@ export default function StepEducation() {
               <input value={item.date} input={(event: Event) => (item.date = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Sure</span>
+              <span>Süre</span>
               <input value={item.duration} input={(event: Event) => (item.duration = (event.target as HTMLInputElement).value)} />
             </label>
           </div>
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeTraining(item.id)}>
-              Kaydi kaldir
+              Kaydı kaldır
             </button>
           </div>
         </article>
       ))}
       <button class="button button-secondary" click={cvStore.addTraining}>
-        Egitim ekle
+        Eğitim ekle
       </button>
 
       <h3 class="subsection-title">Kongreler ve etkinlikler</h3>
@@ -119,7 +119,7 @@ export default function StepEducation() {
           </label>
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeCongress(item.id)}>
-              Kaydi kaldir
+              Kaydı kaldır
             </button>
           </div>
         </article>

@@ -7,8 +7,8 @@ export default function CVPreview() {
   return (
     <section class="preview-card">
       <div class="preview-toolbar">
-        <p class="eyebrow">Canli onizleme</p>
-        <span class="preview-note">Bu onizleme ATS yazdirma ciktisiyla ayni icerigi gosterir</span>
+        <p class="eyebrow">Canlı önizleme</p>
+        <span class="preview-note">Bu önizleme ATS yazdırma çıktısıyla aynı içeriği gösterir</span>
       </div>
 
       {hiddenFinding && (

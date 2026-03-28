@@ -5,28 +5,28 @@ export default function StepExperience() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alani</p>
-          <h2>Is ve staj deneyimi</h2>
-          <p class="section-copy">Her isyeri icin ayri bir kart ekle. 2-3 farkli yerde calistiysan her birini ayri deneyim olarak yaz; onizleme ters kronolojik olarak siralar.</p>
+          <p class="eyebrow">Form alanı</p>
+          <h2>İş ve staj deneyimi</h2>
+          <p class="section-copy">Her işyeri için ayrı bir kart ekle. 2-3 farklı yerde çalıştıysan her birini ayrı deneyim olarak yaz; önizleme ters kronolojik olarak sıralar.</p>
         </div>
-        <p class="hint-chip">Birden fazla is deneyimi ekleyebilirsin; her kart ayri siralanir ve ATS ciktisinda tek tek gorunur.</p>
+        <p class="hint-chip">Birden fazla iş deneyimi ekleyebilirsin; her kart ayrı sıralanır ve ATS çıktısında tek tek görünür.</p>
       </header>
 
       <div class="summary-card compact-card">
         <p>
-          Is deneyimi kaydi: <strong>{cvStore.data.experience.length}</strong>
+          İş deneyimi kaydı: <strong>{cvStore.data.experience.length}</strong>
         </p>
         <button class="button" click={cvStore.addExperience}>
-          Yeni is deneyimi ekle
+          Yeni iş deneyimi ekle
         </button>
       </div>
 
-      <h3 class="subsection-title">Is deneyimi</h3>
+      <h3 class="subsection-title">İş deneyimi</h3>
       {cvStore.data.experience.map((item) => (
         <article class="entry-card" key={item.id}>
           <div class="grid two-col">
             <label class="field">
-              <span>Pozisyon unvani</span>
+              <span>Pozisyon unvanı</span>
               <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
@@ -38,11 +38,11 @@ export default function StepExperience() {
               <input value={item.location} input={(event: Event) => (item.location = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Baslangic</span>
+              <span>Başlangıç</span>
               <input type="month" value={item.startDate} input={(event: Event) => (item.startDate = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Bitis</span>
+              <span>Bitiş</span>
               <input type="month" value={item.endDate} disabled={item.current} input={(event: Event) => (item.endDate = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="checkbox-field">
@@ -53,18 +53,18 @@ export default function StepExperience() {
 
           <div class="grid two-col">
             <label class="field">
-              <span>Sorumluluklar ve katkilar (TR)</span>
+              <span>Sorumluluklar ve katkılar (TR)</span>
               <textarea rows="5" value={item.bullets.tr} input={(event: Event) => cvStore.updateLocalizedField(item.bullets, 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
-              <span>Sorumluluklar ve katkilar (EN)</span>
+              <span>Sorumluluklar ve katkılar (EN)</span>
               <textarea rows="5" value={item.bullets.en} input={(event: Event) => cvStore.updateLocalizedField(item.bullets, 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeExperience(item.id)}>
-              Kaydi kaldir
+              Kaydı kaldır
             </button>
           </div>
         </article>
@@ -74,7 +74,7 @@ export default function StepExperience() {
         <article class="entry-card" key={item.id}>
           <div class="grid two-col">
             <label class="field">
-              <span>Staj unvani</span>
+              <span>Staj unvanı</span>
               <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
@@ -86,11 +86,11 @@ export default function StepExperience() {
               <input value={item.location} input={(event: Event) => (item.location = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Baslangic</span>
+              <span>Başlangıç</span>
               <input type="month" value={item.startDate} input={(event: Event) => (item.startDate = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
-              <span>Bitis</span>
+              <span>Bitiş</span>
               <input type="month" value={item.endDate} disabled={item.current} input={(event: Event) => (item.endDate = (event.target as HTMLInputElement).value)} />
             </label>
             <label class="checkbox-field">
@@ -101,18 +101,18 @@ export default function StepExperience() {
 
           <div class="grid two-col">
             <label class="field">
-              <span>Sorumluluklar ve katkilar (TR)</span>
+              <span>Sorumluluklar ve katkılar (TR)</span>
               <textarea rows="5" value={item.bullets.tr} input={(event: Event) => cvStore.updateLocalizedField(item.bullets, 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
-              <span>Sorumluluklar ve katkilar (EN)</span>
+              <span>Sorumluluklar ve katkılar (EN)</span>
               <textarea rows="5" value={item.bullets.en} input={(event: Event) => cvStore.updateLocalizedField(item.bullets, 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeInternship(item.id)}>
-              Kaydi kaldir
+              Kaydı kaldır
             </button>
           </div>
         </article>

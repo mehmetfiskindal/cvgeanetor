@@ -147,7 +147,7 @@ export interface PrintSection {
 }
 
 const MONTHS = {
-  tr: ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'],
+  tr: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
   en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 } as const
 
@@ -167,8 +167,8 @@ const KEYWORD_PREFIXES = [
   'nice to have ',
   'required ',
   'preferred ',
-  'tecrube ',
-  'tecrubesi ',
+  'tecrübe ',
+  'tecrübesi ',
   'deneyim ',
   'deneyimi ',
   'bilgisi ',
@@ -209,12 +209,12 @@ const KEYWORD_STOPWORDS = new Set([
   've',
   'veya',
   'ile',
-  'icin',
+  'için',
   'gibi',
   'iyi',
-  'guculu',
+  'güçlü',
   'deneyim',
-  'tecrube',
+  'tecrübe',
   'bilgi',
   'beceri',
   'zorunlu',
@@ -467,13 +467,13 @@ export const createPrintSections = (data: CVDataLike): PrintSection[] => {
   const labels =
     locale === 'tr'
       ? {
-          summary: 'Profesyonel Ozet',
+          summary: 'Profesyonel Özet',
           skills: 'Teknik Beceriler',
-          experience: 'Is Deneyimi',
+          experience: 'İş Deneyimi',
           projects: 'Projeler',
-          education: 'Egitim',
+          education: 'Eğitim',
           technicalSkills: 'Teknik Beceriler',
-          additionalSkills: 'Diger Beceriler',
+          additionalSkills: 'Diğer Beceriler',
           languages: 'Diller',
           role: 'Pozisyon',
           project: 'Proje',

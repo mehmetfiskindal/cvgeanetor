@@ -10,8 +10,8 @@ export default function StepSidebar({ steps, currentStep, onSelectStep }: StepSi
   return (
     <aside class="sidebar-card">
       <div class="sidebar-head">
-        <p class="eyebrow">Adimlar</p>
-        <p class="sidebar-progress">%{Math.round(((currentStep + 1) / steps.length) * 100)} tamamlandi</p>
+        <p class="eyebrow">Adımlar</p>
+        <p class="sidebar-progress">%{Math.round(((currentStep + 1) / steps.length) * 100)} tamamlandı</p>
       </div>
 
       <div class="step-list">
