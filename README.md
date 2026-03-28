@@ -1,4 +1,4 @@
-# CV GeaNetor
+# cvgeanetor
 
 ATS uyumlu CV olusturmak, denetlemek ve PDF olarak yazdirmak icin gelistirilmis adim-adim web uygulamasi.
 
@@ -69,7 +69,7 @@ tests/
 
 ```bash
 git add .
-git commit -m "Add CV GeaNetor project"
+git commit -m "Add cvgeanetor project"
 git push origin main
 ```
 

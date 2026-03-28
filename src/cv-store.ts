@@ -553,7 +553,17 @@ class CVStore extends Store {
   <title>${escapeHtml(fullName)}</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; color: #111827; font: 16px/1.45 Arial, Calibri, "Times New Roman", sans-serif; }
+    body {
+      margin: 0;
+      color: #111827;
+      font: 16px/1.45 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 400;
+      font-synthesis: none;
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+    }
     .page { width: 100%; max-width: 900px; margin: 0 auto; padding: 28px; }
     .header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid #d1d5db; padding-bottom: 14px; }
     .header h1 { margin: 0; font-size: 34px; line-height: 1.05; }
