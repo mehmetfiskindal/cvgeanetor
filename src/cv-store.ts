@@ -556,6 +556,14 @@ class CVStore extends Store {
       this.data.careerObjective = merged.careerObjective
       this.data.ats = merged.ats
 
+      // Force DOM input values to sync after import
+      // This is a workaround for Gea's list rendering not properly populating initial values
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          this.syncInputValuesFromData()
+        }, 100)
+      }
+
       if (this.data.experience?.[0]) {
         const exp = this.data.experience[0]
         console.log('[IMPORT] After store title:', exp.title)
@@ -827,6 +835,45 @@ class CVStore extends Store {
   formatMonth = (value: string, locale: LocaleCode = 'tr') => formatLocalizedMonth(value, locale)
 
   hasLocalizedText = hasLocalizedText
+
+  private syncInputValuesFromData() {
+    // Workaround for Gea list rendering not populating initial values from store
+    // Manually sync input element values with data after import
+    if (typeof window === 'undefined') return
+
+    const syncArrayInputs = (arrayData: any[], selector: string) => {
+      const articles = document.querySelectorAll(selector)
+      articles.forEach((article, idx) => {
+        const item = arrayData[idx]
+        if (!item) return
+
+        // Sync input values from item data
+        const inputs = article.querySelectorAll('input[type="text"], input[type="month"], textarea')
+        inputs.forEach((input: HTMLInputElement | HTMLTextAreaElement, inputIdx: number) => {
+          // Try to match input to item property by position and type
+          if (input.type === 'text' && inputIdx === 0 && item.title) {
+            ;(input as HTMLInputElement).value = item.title
+          } else if (input.type === 'text' && inputIdx === 1 && item.company) {
+            ;(input as HTMLInputElement).value = item.company
+          } else if (input.type === 'text' && inputIdx === 2 && item.location) {
+            ;(input as HTMLInputElement).value = item.location
+          } else if (input.type === 'month' && inputIdx === 3 && item.startDate) {
+            ;(input as HTMLInputElement).value = item.startDate
+          } else if (input.type === 'month' && inputIdx === 4 && item.endDate) {
+            ;(input as HTMLInputElement).value = item.endDate
+          } else if (input instanceof HTMLTextAreaElement && item.bullets) {
+            const value = typeof item.bullets === 'string' ? item.bullets : item.bullets?.tr || ''
+            ;(input as HTMLTextAreaElement).value = value
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }))
+        })
+      })
+    }
+
+    // Sync all array-based fields
+    syncArrayInputs(this.data.experience, 'article.entry-card')
+    syncArrayInputs(this.data.internships, 'article.entry-card')
+  }
 }
 
 export default new CVStore()
