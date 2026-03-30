@@ -33,7 +33,7 @@ export default class App extends Component {
 
         <section className="workspace">
           <StepSidebar steps={cvStore.steps} currentStep={cvStore.currentStep} onSelectStep={cvStore.goToStep} />
-          <StepForm currentStep={cvStore.currentStep} stepCount={cvStore.steps.length} />
+          <StepForm key={`form-${cvStore.formRevision}`} currentStep={cvStore.currentStep} stepCount={cvStore.steps.length} />
           <CVPreview />
         </section>
 

@@ -322,6 +322,7 @@ class CVStore extends Store {
   steps = STEP_META
   currentStep = 0
   previewRevision = 0
+  formRevision = 0
   data: CVData = cloneDefaultData()
   alert = {
     message: '',
@@ -330,6 +331,10 @@ class CVStore extends Store {
 
   bumpPreviewRevision = () => {
     this.previewRevision += 1
+  }
+
+  bumpFormRevision = () => {
+    this.formRevision += 1
   }
 
   get completionRatio() {
@@ -548,42 +553,8 @@ class CVStore extends Store {
       this.data.computerSkills = [...this.data.computerSkills]
       this.data.otherSkills = [...this.data.otherSkills]
       this.data.activities = [...this.data.activities]
-
-      // Sync DOM form values with imported data
-      // This is a workaround for Gea's static value bindings in list rendering
-      const data = this.data
-      setTimeout(() => {
-        const experienceCards = document.querySelectorAll('article.entry-card[data-import-sync="experience"]')
-        const internshipCards = document.querySelectorAll('article.entry-card[data-import-sync="internship"]')
-
-        experienceCards.forEach((card, index) => {
-          const item = data.experience[index]
-          if (!item) return
-          const inputs = card.querySelectorAll('input, textarea')
-          if (inputs[0]) inputs[0].value = item.title || ''
-          if (inputs[1]) inputs[1].value = item.company || ''
-          if (inputs[2]) inputs[2].value = item.location || ''
-          if (inputs[3]) inputs[3].value = item.startDate || ''
-          if (inputs[4]) inputs[4].value = item.endDate || ''
-          if (inputs[5]) (inputs[5] as HTMLInputElement).checked = item.current || false
-          if (inputs[6]) inputs[6].value = item.bullets?.tr || ''
-          if (inputs[7]) inputs[7].value = item.bullets?.en || ''
-        })
-
-        internshipCards.forEach((card, index) => {
-          const item = data.internships[index]
-          if (!item) return
-          const inputs = card.querySelectorAll('input, textarea')
-          if (inputs[0]) inputs[0].value = item.title || ''
-          if (inputs[1]) inputs[1].value = item.company || ''
-          if (inputs[2]) inputs[2].value = item.location || ''
-          if (inputs[3]) inputs[3].value = item.startDate || ''
-          if (inputs[4]) inputs[4].value = item.endDate || ''
-          if (inputs[5]) (inputs[5] as HTMLInputElement).checked = item.current || false
-          if (inputs[6]) inputs[6].value = item.bullets?.tr || ''
-          if (inputs[7]) inputs[7].value = item.bullets?.en || ''
-        })
-      }, 100)
+      this.bumpFormRevision()
+      this.bumpPreviewRevision()
 
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
       return true
