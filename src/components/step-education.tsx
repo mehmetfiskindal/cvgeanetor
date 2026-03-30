@@ -17,43 +17,43 @@ export default function StepEducation() {
           <div class="grid two-col">
             <label class="field">
               <span>Okul</span>
-              <input value={item.school} input={(event: Event) => (item.school = (event.target as HTMLInputElement).value)} />
+              <input value={item.school} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'school', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Derece</span>
-              <input value={item.degree} input={(event: Event) => (item.degree = (event.target as HTMLInputElement).value)} />
+              <input value={item.degree} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'degree', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Fakülte</span>
-              <input value={item.faculty} input={(event: Event) => (item.faculty = (event.target as HTMLInputElement).value)} />
+              <input value={item.faculty} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'faculty', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Bölüm</span>
-              <input value={item.department} input={(event: Event) => (item.department = (event.target as HTMLInputElement).value)} />
+              <input value={item.department} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'department', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Başlangıç</span>
-              <input type="month" value={item.startDate} input={(event: Event) => (item.startDate = (event.target as HTMLInputElement).value)} />
+              <input type="month" value={item.startDate} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'startDate', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Bitiş</span>
-              <input type="month" value={item.endDate} input={(event: Event) => (item.endDate = (event.target as HTMLInputElement).value)} />
+              <input type="month" value={item.endDate} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'endDate', (event.target as HTMLInputElement).value)} />
             </label>
           </div>
 
           <label class="field">
             <span>Genel not ortalaması</span>
-            <input value={item.gpa} input={(event: Event) => (item.gpa = (event.target as HTMLInputElement).value)} />
+            <input value={item.gpa} input={(event: Event) => cvStore.updateCollectionField('education', item.id, 'gpa', (event.target as HTMLInputElement).value)} />
           </label>
 
           <div class="grid two-col">
             <label class="field">
               <span>Notlar / ilgili dersler (TR)</span>
-              <textarea rows="4" value={item.notes.tr} input={(event: Event) => cvStore.updateLocalizedField(item.notes, 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.notes.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('education', item.id, 'notes', 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
               <span>Notlar / ilgili dersler (EN)</span>
-              <textarea rows="4" value={item.notes.en} input={(event: Event) => cvStore.updateLocalizedField(item.notes, 'en', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.notes.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('education', item.id, 'notes', 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
@@ -74,19 +74,19 @@ export default function StepEducation() {
           <div class="grid two-col">
             <label class="field">
               <span>Eğitim</span>
-              <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
+              <input value={item.title} input={(event: Event) => cvStore.updateCollectionField('trainings', item.id, 'title', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Kurum</span>
-              <input value={item.provider} input={(event: Event) => (item.provider = (event.target as HTMLInputElement).value)} />
+              <input value={item.provider} input={(event: Event) => cvStore.updateCollectionField('trainings', item.id, 'provider', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Tarih</span>
-              <input value={item.date} input={(event: Event) => (item.date = (event.target as HTMLInputElement).value)} />
+              <input value={item.date} input={(event: Event) => cvStore.updateCollectionField('trainings', item.id, 'date', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Süre</span>
-              <input value={item.duration} input={(event: Event) => (item.duration = (event.target as HTMLInputElement).value)} />
+              <input value={item.duration} input={(event: Event) => cvStore.updateCollectionField('trainings', item.id, 'duration', (event.target as HTMLInputElement).value)} />
             </label>
           </div>
           <div class="entry-actions">
@@ -106,16 +106,16 @@ export default function StepEducation() {
           <div class="grid two-col">
             <label class="field">
               <span>Etkinlik / kongre</span>
-              <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
+              <input value={item.title} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'title', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Konum</span>
-              <input value={item.location} input={(event: Event) => (item.location = (event.target as HTMLInputElement).value)} />
+              <input value={item.location} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'location', (event.target as HTMLInputElement).value)} />
             </label>
           </div>
           <label class="field">
             <span>Tarih</span>
-            <input value={item.date} input={(event: Event) => (item.date = (event.target as HTMLInputElement).value)} />
+            <input value={item.date} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'date', (event.target as HTMLInputElement).value)} />
           </label>
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeCongress(item.id)}>
@@ -130,3 +130,4 @@ export default function StepEducation() {
     </div>
   )
 }
+

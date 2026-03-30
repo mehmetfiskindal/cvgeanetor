@@ -20,7 +20,7 @@ export default function StepObjective() {
           <textarea
             rows={4}
             value={careerObjective.tr}
-            onInput={(event: InputEvent) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'tr', (event.target as HTMLTextAreaElement).value)}
+            input={(event: Event) => cvStore.updateCareerObjective('tr', (event.target as HTMLTextAreaElement).value)}
           />
         </label>
         <label class="field">
@@ -28,7 +28,7 @@ export default function StepObjective() {
           <textarea
             rows={4}
             value={careerObjective.en}
-            onInput={(event: InputEvent) => cvStore.updateLocalizedField(cvStore.data.careerObjective, 'en', (event.target as HTMLTextAreaElement).value)}
+            input={(event: Event) => cvStore.updateCareerObjective('en', (event.target as HTMLTextAreaElement).value)}
           />
         </label>
       </div>

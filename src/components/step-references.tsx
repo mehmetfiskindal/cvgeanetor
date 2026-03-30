@@ -28,23 +28,23 @@ export default function StepReferences() {
               <div class="grid two-col">
                 <label class="field">
                   <span>Ad Soyad</span>
-                  <input value={item.fullName} input={(event: Event) => (item.fullName = (event.target as HTMLInputElement).value)} />
+                  <input value={item.fullName} input={(event: Event) => cvStore.updateCollectionField('references', item.id, 'fullName', (event.target as HTMLInputElement).value)} />
                 </label>
                 <label class="field">
                   <span>Unvan</span>
-                  <input value={item.title} input={(event: Event) => (item.title = (event.target as HTMLInputElement).value)} />
+                  <input value={item.title} input={(event: Event) => cvStore.updateCollectionField('references', item.id, 'title', (event.target as HTMLInputElement).value)} />
                 </label>
                 <label class="field">
                   <span>Kurum</span>
-                  <input value={item.organization} input={(event: Event) => (item.organization = (event.target as HTMLInputElement).value)} />
+                  <input value={item.organization} input={(event: Event) => cvStore.updateCollectionField('references', item.id, 'organization', (event.target as HTMLInputElement).value)} />
                 </label>
                 <label class="field">
                   <span>Telefon</span>
-                  <input value={item.phone} input={(event: Event) => (item.phone = (event.target as HTMLInputElement).value)} />
+                  <input value={item.phone} input={(event: Event) => cvStore.updateCollectionField('references', item.id, 'phone', (event.target as HTMLInputElement).value)} />
                 </label>
                 <label class="field">
                   <span>E-posta</span>
-                  <input value={item.email} input={(event: Event) => (item.email = (event.target as HTMLInputElement).value)} />
+                  <input value={item.email} input={(event: Event) => cvStore.updateCollectionField('references', item.id, 'email', (event.target as HTMLInputElement).value)} />
                 </label>
               </div>
 
@@ -64,3 +64,4 @@ export default function StepReferences() {
     </div>
   )
 }
+

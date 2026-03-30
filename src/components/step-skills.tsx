@@ -18,26 +18,26 @@ export default function StepSkills() {
           <div class="grid two-col">
             <label class="field">
               <span>Dil</span>
-              <input value={item.name} input={(event: Event) => (item.name = (event.target as HTMLInputElement).value)} />
+              <input value={item.name} input={(event: Event) => cvStore.updateCollectionField('languages', item.id, 'name', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Seviye</span>
-              <input value={item.level} input={(event: Event) => (item.level = (event.target as HTMLInputElement).value)} />
+              <input value={item.level} input={(event: Event) => cvStore.updateCollectionField('languages', item.id, 'level', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Skor / belge</span>
-              <input value={item.score} input={(event: Event) => (item.score = (event.target as HTMLInputElement).value)} />
+              <input value={item.score} input={(event: Event) => cvStore.updateCollectionField('languages', item.id, 'score', (event.target as HTMLInputElement).value)} />
             </label>
           </div>
 
           <div class="grid two-col">
             <label class="field">
               <span>Açıklama (TR)</span>
-              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('languages', item.id, 'details', 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
               <span>Açıklama (EN)</span>
-              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'en', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('languages', item.id, 'details', 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
@@ -57,17 +57,17 @@ export default function StepSkills() {
         <article class="entry-card" key={item.id}>
           <label class="field">
             <span>Başlık</span>
-            <input value={item.name} input={(event: Event) => (item.name = (event.target as HTMLInputElement).value)} />
+            <input value={item.name} input={(event: Event) => cvStore.updateCollectionField('computerSkills', item.id, 'name', (event.target as HTMLInputElement).value)} />
           </label>
 
           <div class="grid two-col">
             <label class="field">
               <span>Açıklama (TR)</span>
-              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('computerSkills', item.id, 'details', 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
               <span>Açıklama (EN)</span>
-              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'en', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('computerSkills', item.id, 'details', 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
@@ -87,17 +87,17 @@ export default function StepSkills() {
         <article class="entry-card" key={item.id}>
           <label class="field">
             <span>Başlık</span>
-            <input value={item.name} input={(event: Event) => (item.name = (event.target as HTMLInputElement).value)} />
+            <input value={item.name} input={(event: Event) => cvStore.updateCollectionField('otherSkills', item.id, 'name', (event.target as HTMLInputElement).value)} />
           </label>
 
           <div class="grid two-col">
             <label class="field">
               <span>Açıklama (TR)</span>
-              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('otherSkills', item.id, 'details', 'tr', (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
               <span>Açıklama (EN)</span>
-              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateLocalizedField(item.details, 'en', (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="4" value={item.details.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('otherSkills', item.id, 'details', 'en', (event.target as HTMLTextAreaElement).value)} />
             </label>
           </div>
 
@@ -114,3 +114,4 @@ export default function StepSkills() {
     </div>
   )
 }
+

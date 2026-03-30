@@ -28,7 +28,7 @@ export default function StepActivities() {
             <input
               value={item.category}
               placeholder="İlgi alanları / Üyelikler / Gönüllülük"
-              input={(event: Event) => (item.category = (event.target as HTMLInputElement).value)}
+              input={(event: Event) => cvStore.updateCollectionField('activities', item.id, 'category', (event.target as HTMLInputElement).value)}
             />
           </label>
 
@@ -37,7 +37,7 @@ export default function StepActivities() {
             <textarea
               rows="4"
               value={item.description}
-              input={(event: Event) => (item.description = (event.target as HTMLTextAreaElement).value)}
+              input={(event: Event) => cvStore.updateCollectionField('activities', item.id, 'description', (event.target as HTMLTextAreaElement).value)}
             />
           </label>
 
@@ -51,3 +51,4 @@ export default function StepActivities() {
     </div>
   )
 }
+

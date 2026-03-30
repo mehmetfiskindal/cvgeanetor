@@ -133,6 +133,19 @@ export interface CVData {
   ats: AtsSettings
 }
 
+type CollectionKey =
+  | 'education'
+  | 'trainings'
+  | 'coursesOrCongresses'
+  | 'experience'
+  | 'internships'
+  | 'projects'
+  | 'languages'
+  | 'computerSkills'
+  | 'otherSkills'
+  | 'activities'
+  | 'references'
+
 export interface StepMeta {
   id: number
   title: string
@@ -337,6 +350,53 @@ class CVStore extends Store {
     this.formRevision += 1
   }
 
+  flushFormControlsToStore = () => {
+    if (typeof document === 'undefined') return
+    const controls = document.querySelectorAll('.form-card input, .form-card textarea, .form-card select')
+    controls.forEach((control) => {
+      control.dispatchEvent(new Event('input', { bubbles: true }))
+      control.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+  }
+
+  private updateCollectionItem<K extends CollectionKey>(
+    key: K,
+    id: string,
+    updater: (item: CVData[K][number]) => CVData[K][number],
+  ) {
+    this.data[key] = this.data[key].map((item) => (item.id === id ? updater(item) : item)) as CVData[K]
+    this.bumpPreviewRevision()
+  }
+
+  updateCollectionField = <K extends CollectionKey, F extends keyof CVData[K][number]>(
+    key: K,
+    id: string,
+    field: F,
+    value: CVData[K][number][F],
+  ) => {
+    this.updateCollectionItem(key, id, (item) => ({ ...item, [field]: value }) as CVData[K][number])
+  }
+
+  updateCollectionLocalizedField = <
+    K extends CollectionKey,
+    F extends keyof CVData[K][number],
+    L extends keyof LocalizedText
+  >(
+    key: K,
+    id: string,
+    field: F,
+    locale: L,
+    value: string,
+  ) => {
+    this.updateCollectionItem(key, id, (item) => ({
+      ...item,
+      [field]: {
+        ...(item[field] as LocalizedText),
+        [locale]: value,
+      },
+    }) as CVData[K][number])
+  }
+
   get completionRatio() {
     return Math.round(((this.currentStep + 1) / this.steps.length) * 100)
   }
@@ -395,15 +455,18 @@ class CVStore extends Store {
   }
 
   updateContact = (field: keyof ContactInfo, value: string) => {
-    this.data.contact[field] = value
+    this.data.contact = { ...this.data.contact, [field]: value }
+    this.bumpPreviewRevision()
   }
 
   updatePersonalDetails = (field: keyof PersonalDetails, value: string | boolean) => {
-    ;(this.data.personalDetails[field] as string | boolean) = value
+    this.data.personalDetails = { ...this.data.personalDetails, [field]: value } as PersonalDetails
+    this.bumpPreviewRevision()
   }
 
-  updateLocalizedField = (target: LocalizedText, locale: keyof LocalizedText, value: string) => {
-    target[locale] = value
+  updateCareerObjective = (locale: keyof LocalizedText, value: string) => {
+    this.data.careerObjective = { ...this.data.careerObjective, [locale]: value }
+    this.bumpPreviewRevision()
   }
 
   addActivity = () => {
@@ -417,11 +480,13 @@ class CVStore extends Store {
   }
 
   updateAtsField = (field: keyof AtsSettings, value: string) => {
-    ;(this.data.ats[field] as string) = value
+    this.data.ats = { ...this.data.ats, [field]: value }
+    this.bumpPreviewRevision()
   }
 
   setOutputLanguage = (value: LocaleCode) => {
-    this.data.ats.outputLanguage = value
+    this.data.ats = { ...this.data.ats, outputLanguage: value }
+    this.bumpPreviewRevision()
   }
 
   addEducation = () => {
@@ -522,13 +587,17 @@ class CVStore extends Store {
     this.bumpPreviewRevision()
   }
 
-  setCurrentFlag = (item: ExperienceItem | ProjectItem, value: boolean) => {
-    item.current = value
-    if (value) item.endDate = ''
+  setCollectionCurrentFlag = (key: 'experience' | 'internships' | 'projects', id: string, value: boolean) => {
+    this.updateCollectionItem(key, id, (item) => ({
+      ...item,
+      current: value,
+      endDate: value ? '' : item.endDate,
+    }))
   }
 
   setReferencesAvailableOnRequest = (value: boolean) => {
     this.data.referencesAvailableOnRequest = value
+    this.bumpPreviewRevision()
   }
 
   async importFromFile(file: File | null): Promise<boolean> {
@@ -567,14 +636,7 @@ class CVStore extends Store {
 
 
   exportToJson = () => {
-    // Ensure latest in-DOM form edits are flushed to store before serialization.
-    if (typeof document !== 'undefined') {
-      const controls = document.querySelectorAll('.form-card input, .form-card textarea, .form-card select')
-      controls.forEach((control) => {
-        control.dispatchEvent(new Event('input', { bubbles: true }))
-        control.dispatchEvent(new Event('change', { bubbles: true }))
-      })
-    }
+    this.flushFormControlsToStore()
 
     const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -587,6 +649,8 @@ class CVStore extends Store {
   }
 
   printAtsCv = () => {
+    this.flushFormControlsToStore()
+
     const localizedEntries = [
       this.data.careerObjective,
       ...this.data.education.map((item) => item.notes),
