@@ -554,7 +554,6 @@ class CVStore extends Store {
           }
 
           const inputs = card.querySelectorAll('input, textarea')
-          console.log('[SYNC] Found card with', inputs.length, 'inputs, item:', item?.title)
           if (inputs[0]) inputs[0].value = item.title || ''
           if (inputs[1]) inputs[1].value = item.company || ''
           if (inputs[2]) inputs[2].value = item.location || ''
@@ -563,7 +562,6 @@ class CVStore extends Store {
           if (inputs[5]) (inputs[5] as HTMLInputElement).checked = item.current || false
           if (inputs[6]) inputs[6].value = item.bullets?.tr || ''
           if (inputs[7]) inputs[7].value = item.bullets?.en || ''
-          console.log('[SYNC] After sync, first input value:', inputs[0]?.value)
         })
       }, 100)
 
