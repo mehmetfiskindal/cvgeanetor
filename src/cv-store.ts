@@ -518,57 +518,11 @@ class CVStore extends Store {
     try {
       const text = (await file.text()).replace(/^\uFEFF/, '')
       const parsed = JSON.parse(text) as Partial<CVData>
-      console.log('[IMPORT] Parsed experience count:', parsed.experience?.length)
-
       const normalizedParsed = normalizeImportedText(parsed)
-      console.log('[IMPORT] After normalization, experience count:', normalizedParsed.experience?.length)
-      if (normalizedParsed.experience?.[0]) {
-        const exp = normalizedParsed.experience[0]
-        console.log('[IMPORT] Normalized[0] title:', exp.title)
-        console.log('[IMPORT] Normalized[0] company:', exp.company)
-      }
-
       const merged = this.mergeWithDefaults(normalizedParsed)
-      console.log('[IMPORT] After merge, experience count:', merged.experience.length)
-      if (merged.experience?.[0]) {
-        const exp = merged.experience[0]
-        console.log('[IMPORT] Merged[0] title:', exp.title)
-        console.log('[IMPORT] Merged[0] company:', exp.company)
-      }
 
-      // Update arrays using splice to trigger proper list updates in Gea
-      // Clear existing items
-      this.data.experience.splice(0, this.data.experience.length, ...merged.experience)
-      this.data.internships.splice(0, this.data.internships.length, ...merged.internships)
-      this.data.education.splice(0, this.data.education.length, ...merged.education)
-      this.data.projects.splice(0, this.data.projects.length, ...merged.projects)
-      this.data.languages.splice(0, this.data.languages.length, ...merged.languages)
-      this.data.computerSkills.splice(0, this.data.computerSkills.length, ...merged.computerSkills)
-      this.data.otherSkills.splice(0, this.data.otherSkills.length, ...merged.otherSkills)
-      this.data.trainings.splice(0, this.data.trainings.length, ...merged.trainings)
-      this.data.coursesOrCongresses.splice(0, this.data.coursesOrCongresses.length, ...merged.coursesOrCongresses)
-      this.data.references.splice(0, this.data.references.length, ...merged.references)
-      this.data.activities.splice(0, this.data.activities.length, ...merged.activities)
-
-      // Update scalar fields
-      this.data.contact = merged.contact
-      this.data.personalDetails = merged.personalDetails
-      this.data.careerObjective = merged.careerObjective
-      this.data.ats = merged.ats
-
-      // Force DOM input values to sync after import
-      // This is a workaround for Gea's list rendering not properly populating initial values
-      if (typeof window !== 'undefined') {
-        setTimeout(() => {
-          this.syncInputValuesFromData()
-        }, 100)
-      }
-
-      if (this.data.experience?.[0]) {
-        const exp = this.data.experience[0]
-        console.log('[IMPORT] After store title:', exp.title)
-        console.log('[IMPORT] After store company:', exp.company)
-      }
+      // Replace entire data object to trigger full re-render
+      this.data = merged as CVData
 
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
       return true
@@ -765,20 +719,11 @@ class CVStore extends Store {
         ...createCongressItem(),
         ...item,
       })),
-      experience: (value.experience || merged.experience).map((item, idx) => {
-        const created = createExperienceItem()
-        const result = {
-          ...created,
-          ...item,
-          bullets: { ...createLocalizedText(), ...(item.bullets || {}) },
-        }
-        if (typeof window !== 'undefined' && idx === 0) {
-          console.log('[MERGE] item keys:', Object.keys(item))
-          console.log('[MERGE] input item:', JSON.stringify({ title: item.title, company: item.company, location: item.location }))
-          console.log('[MERGE] result item:', JSON.stringify({ title: result.title, company: result.company, location: result.location }))
-        }
-        return result
-      }),
+      experience: (value.experience || merged.experience).map((item) => ({
+        ...createExperienceItem(),
+        ...item,
+        bullets: { ...createLocalizedText(), ...(item.bullets || {}) },
+      })),
       internships: (value.internships || merged.internships).map((item) => ({
         ...createExperienceItem(),
         ...item,
@@ -835,45 +780,6 @@ class CVStore extends Store {
   formatMonth = (value: string, locale: LocaleCode = 'tr') => formatLocalizedMonth(value, locale)
 
   hasLocalizedText = hasLocalizedText
-
-  private syncInputValuesFromData() {
-    // Workaround for Gea list rendering not populating initial values from store
-    // Manually sync input element values with data after import
-    if (typeof window === 'undefined') return
-
-    const syncArrayInputs = (arrayData: any[], selector: string) => {
-      const articles = document.querySelectorAll(selector)
-      articles.forEach((article, idx) => {
-        const item = arrayData[idx]
-        if (!item) return
-
-        // Sync input values from item data
-        const inputs = article.querySelectorAll('input[type="text"], input[type="month"], textarea')
-        inputs.forEach((input: HTMLInputElement | HTMLTextAreaElement, inputIdx: number) => {
-          // Try to match input to item property by position and type
-          if (input.type === 'text' && inputIdx === 0 && item.title) {
-            ;(input as HTMLInputElement).value = item.title
-          } else if (input.type === 'text' && inputIdx === 1 && item.company) {
-            ;(input as HTMLInputElement).value = item.company
-          } else if (input.type === 'text' && inputIdx === 2 && item.location) {
-            ;(input as HTMLInputElement).value = item.location
-          } else if (input.type === 'month' && inputIdx === 3 && item.startDate) {
-            ;(input as HTMLInputElement).value = item.startDate
-          } else if (input.type === 'month' && inputIdx === 4 && item.endDate) {
-            ;(input as HTMLInputElement).value = item.endDate
-          } else if (input instanceof HTMLTextAreaElement && item.bullets) {
-            const value = typeof item.bullets === 'string' ? item.bullets : item.bullets?.tr || ''
-            ;(input as HTMLTextAreaElement).value = value
-          }
-          input.dispatchEvent(new Event('input', { bubbles: true }))
-        })
-      })
-    }
-
-    // Sync all array-based fields
-    syncArrayInputs(this.data.experience, 'article.entry-card')
-    syncArrayInputs(this.data.internships, 'article.entry-card')
-  }
 }
 
 export default new CVStore()
