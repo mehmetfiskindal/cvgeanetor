@@ -4,12 +4,12 @@
     "gea-framework": {
       "source": "dashersw/gea",
       "sourceType": "github",
-      "computedHash": "7ff62152da27d319fddd6dc0753686bf099da3f715bcfab61532b95ffb81eff8"
+      "computedHash": "e6d6cf6dfc059bb863deb5eae7f882ca07f2bb406aee15fd647cc40391f2d492"
     },
     "gea-ui-components": {
       "source": "dashersw/gea",
       "sourceType": "github",
-      "computedHash": "32ab9dcc3740205241dc93981c42e70106b7ca02c066d147f2367e192439a756"
+      "computedHash": "06ac19b6a4dc9cea1b464edacf220f7799b6a41851b39cd38506d6707481b56e"
     }
   }
 }
