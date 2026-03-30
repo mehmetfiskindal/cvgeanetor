@@ -1,5 +1,4 @@
 import { Component } from '@geajs/core'
-import AtsPrintPreview from './components/ats-print-preview'
 import CVPreview from './components/cv-preview'
 import JsonDropZone from './components/json-drop-zone'
 import StepForm from './components/step-form'
@@ -36,10 +35,6 @@ export default class App extends Component {
           <StepForm key={`form-${cvStore.formRevision}`} currentStep={cvStore.currentStep} stepCount={cvStore.steps.length} />
           <CVPreview />
         </section>
-
-        <div className="print-only-container">
-          <AtsPrintPreview variant="print" />
-        </div>
       </main>
     )
   }

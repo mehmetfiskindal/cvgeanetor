@@ -407,7 +407,7 @@ class CVStore extends Store {
   }
 
   addActivity = () => {
-    this.data.activities.push(createActivityItem())
+    this.data.activities = [...this.data.activities, createActivityItem()]
   }
 
   removeActivity = (id: string) => {
@@ -425,7 +425,7 @@ class CVStore extends Store {
   }
 
   addEducation = () => {
-    this.data.education.push(createEducationItem())
+    this.data.education = [...this.data.education, createEducationItem()]
   }
 
   removeEducation = (id: string) => {
@@ -435,7 +435,7 @@ class CVStore extends Store {
   }
 
   addTraining = () => {
-    this.data.trainings.push(createTrainingItem())
+    this.data.trainings = [...this.data.trainings, createTrainingItem()]
   }
 
   removeTraining = (id: string) => {
@@ -445,7 +445,7 @@ class CVStore extends Store {
   }
 
   addCongress = () => {
-    this.data.coursesOrCongresses.push(createCongressItem())
+    this.data.coursesOrCongresses = [...this.data.coursesOrCongresses, createCongressItem()]
   }
 
   removeCongress = (id: string) => {
@@ -455,7 +455,7 @@ class CVStore extends Store {
   }
 
   addExperience = () => {
-    this.data.experience.push(createExperienceItem())
+    this.data.experience = [...this.data.experience, createExperienceItem()]
   }
 
   removeExperience = (id: string) => {
@@ -464,7 +464,7 @@ class CVStore extends Store {
   }
 
   addInternship = () => {
-    this.data.internships.push(createExperienceItem())
+    this.data.internships = [...this.data.internships, createExperienceItem()]
   }
 
   removeInternship = (id: string) => {
@@ -473,7 +473,7 @@ class CVStore extends Store {
   }
 
   addProject = () => {
-    this.data.projects.push(createProjectItem())
+    this.data.projects = [...this.data.projects, createProjectItem()]
   }
 
   removeProject = (id: string) => {
@@ -483,7 +483,7 @@ class CVStore extends Store {
   }
 
   addLanguage = () => {
-    this.data.languages.push(createLanguageItem())
+    this.data.languages = [...this.data.languages, createLanguageItem()]
   }
 
   removeLanguage = (id: string) => {
@@ -493,7 +493,7 @@ class CVStore extends Store {
   }
 
   addComputerSkill = () => {
-    this.data.computerSkills.push(createSkillItem())
+    this.data.computerSkills = [...this.data.computerSkills, createSkillItem()]
   }
 
   removeComputerSkill = (id: string) => {
@@ -503,7 +503,7 @@ class CVStore extends Store {
   }
 
   addOtherSkill = () => {
-    this.data.otherSkills.push(createSkillItem())
+    this.data.otherSkills = [...this.data.otherSkills, createSkillItem()]
   }
 
   removeOtherSkill = (id: string) => {
@@ -513,7 +513,7 @@ class CVStore extends Store {
   }
 
   addReference = () => {
-    this.data.references.push(createReferenceItem())
+    this.data.references = [...this.data.references, createReferenceItem()]
   }
 
   removeReference = (id: string) => {

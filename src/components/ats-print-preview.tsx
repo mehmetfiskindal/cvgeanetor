@@ -1,14 +1,8 @@
 import cvStore from '../cv-store'
 
-interface AtsPrintPreviewProps {
-  variant?: 'screen' | 'print'
-}
-
-export default function AtsPrintPreview({ variant = 'screen' }: AtsPrintPreviewProps) {
-  const wrapperClass = variant === 'print' ? 'ats-print-sheet ats-print-only' : 'ats-print-sheet ats-print-screen'
-
+export default function AtsPrintPreview() {
   return (
-    <section class={wrapperClass}>
+    <section class="ats-print-sheet ats-print-screen">
       <header class="ats-print-header">
         <div>
           <h2>{cvStore.data.contact.fullName || 'Candidate Name'}</h2>
