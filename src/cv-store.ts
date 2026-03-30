@@ -521,8 +521,51 @@ class CVStore extends Store {
       const normalizedParsed = normalizeImportedText(parsed)
       const merged = this.mergeWithDefaults(normalizedParsed)
 
-      // Replace entire data object to trigger full re-render
+      // Replace entire data object
       this.data = merged as CVData
+
+      // Force array re-renders by triggering change detection on array properties
+      // This is necessary for Gea's list rendering in components like experience
+      this.data.experience = [...this.data.experience]
+      this.data.internships = [...this.data.internships]
+      this.data.projects = [...this.data.projects]
+      this.data.education = [...this.data.education]
+      this.data.languages = [...this.data.languages]
+      this.data.computerSkills = [...this.data.computerSkills]
+      this.data.otherSkills = [...this.data.otherSkills]
+      this.data.activities = [...this.data.activities]
+
+      // Sync DOM form values with imported data
+      // This is a workaround for Gea's static value bindings in list rendering
+      const data = this.data
+      setTimeout(() => {
+        const cards = document.querySelectorAll('article.entry-card')
+        let expIdx = 0
+        let intIdx = 0
+
+        cards.forEach((card) => {
+          let item: any
+          if (expIdx < data.experience.length) {
+            item = data.experience[expIdx++]
+          } else if (intIdx < data.internships.length) {
+            item = data.internships[intIdx++]
+          } else {
+            return
+          }
+
+          const inputs = card.querySelectorAll('input, textarea')
+          console.log('[SYNC] Found card with', inputs.length, 'inputs, item:', item?.title)
+          if (inputs[0]) inputs[0].value = item.title || ''
+          if (inputs[1]) inputs[1].value = item.company || ''
+          if (inputs[2]) inputs[2].value = item.location || ''
+          if (inputs[3]) inputs[3].value = item.startDate || ''
+          if (inputs[4]) inputs[4].value = item.endDate || ''
+          if (inputs[5]) (inputs[5] as HTMLInputElement).checked = item.current || false
+          if (inputs[6]) inputs[6].value = item.bullets?.tr || ''
+          if (inputs[7]) inputs[7].value = item.bullets?.en || ''
+          console.log('[SYNC] After sync, first input value:', inputs[0]?.value)
+        })
+      }, 100)
 
       this.setAlert('Taslak başarıyla içe aktarıldı.', 'success')
       return true
@@ -532,6 +575,7 @@ class CVStore extends Store {
       return false
     }
   }
+
 
   exportToJson = () => {
     const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
