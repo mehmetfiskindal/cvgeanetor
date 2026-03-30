@@ -567,6 +567,15 @@ class CVStore extends Store {
 
 
   exportToJson = () => {
+    // Ensure latest in-DOM form edits are flushed to store before serialization.
+    if (typeof document !== 'undefined') {
+      const controls = document.querySelectorAll('.form-card input, .form-card textarea, .form-card select')
+      controls.forEach((control) => {
+        control.dispatchEvent(new Event('input', { bubbles: true }))
+        control.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+    }
+
     const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
