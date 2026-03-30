@@ -321,10 +321,15 @@ const normalizeImportedText = <T>(value: T): T => {
 class CVStore extends Store {
   steps = STEP_META
   currentStep = 0
+  previewRevision = 0
   data: CVData = cloneDefaultData()
   alert = {
     message: '',
     tone: 'info' as AlertTone,
+  }
+
+  bumpPreviewRevision = () => {
+    this.previewRevision += 1
   }
 
   get completionRatio() {
@@ -403,6 +408,7 @@ class CVStore extends Store {
   removeActivity = (id: string) => {
     if (this.data.activities.length === 1) return
     this.data.activities = this.data.activities.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   updateAtsField = (field: keyof AtsSettings, value: string) => {
@@ -420,6 +426,7 @@ class CVStore extends Store {
   removeEducation = (id: string) => {
     if (this.data.education.length === 1) return
     this.data.education = this.data.education.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addTraining = () => {
@@ -429,6 +436,7 @@ class CVStore extends Store {
   removeTraining = (id: string) => {
     if (this.data.trainings.length === 1) return
     this.data.trainings = this.data.trainings.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addCongress = () => {
@@ -438,6 +446,7 @@ class CVStore extends Store {
   removeCongress = (id: string) => {
     if (this.data.coursesOrCongresses.length === 1) return
     this.data.coursesOrCongresses = this.data.coursesOrCongresses.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addExperience = () => {
@@ -445,8 +454,8 @@ class CVStore extends Store {
   }
 
   removeExperience = (id: string) => {
-    if (this.data.experience.length === 1) return
     this.data.experience = this.data.experience.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addInternship = () => {
@@ -454,8 +463,8 @@ class CVStore extends Store {
   }
 
   removeInternship = (id: string) => {
-    if (this.data.internships.length === 1) return
     this.data.internships = this.data.internships.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addProject = () => {
@@ -465,6 +474,7 @@ class CVStore extends Store {
   removeProject = (id: string) => {
     if (this.data.projects.length === 1) return
     this.data.projects = this.data.projects.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addLanguage = () => {
@@ -474,6 +484,7 @@ class CVStore extends Store {
   removeLanguage = (id: string) => {
     if (this.data.languages.length === 1) return
     this.data.languages = this.data.languages.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addComputerSkill = () => {
@@ -483,6 +494,7 @@ class CVStore extends Store {
   removeComputerSkill = (id: string) => {
     if (this.data.computerSkills.length === 1) return
     this.data.computerSkills = this.data.computerSkills.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addOtherSkill = () => {
@@ -492,6 +504,7 @@ class CVStore extends Store {
   removeOtherSkill = (id: string) => {
     if (this.data.otherSkills.length === 1) return
     this.data.otherSkills = this.data.otherSkills.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   addReference = () => {
@@ -501,6 +514,7 @@ class CVStore extends Store {
   removeReference = (id: string) => {
     if (this.data.references.length === 1) return
     this.data.references = this.data.references.filter((item) => item.id !== id)
+    this.bumpPreviewRevision()
   }
 
   setCurrentFlag = (item: ExperienceItem | ProjectItem, value: boolean) => {
@@ -539,20 +553,26 @@ class CVStore extends Store {
       // This is a workaround for Gea's static value bindings in list rendering
       const data = this.data
       setTimeout(() => {
-        const cards = document.querySelectorAll('article.entry-card')
-        let expIdx = 0
-        let intIdx = 0
+        const experienceCards = document.querySelectorAll('article.entry-card[data-import-sync="experience"]')
+        const internshipCards = document.querySelectorAll('article.entry-card[data-import-sync="internship"]')
 
-        cards.forEach((card) => {
-          let item: any
-          if (expIdx < data.experience.length) {
-            item = data.experience[expIdx++]
-          } else if (intIdx < data.internships.length) {
-            item = data.internships[intIdx++]
-          } else {
-            return
-          }
+        experienceCards.forEach((card, index) => {
+          const item = data.experience[index]
+          if (!item) return
+          const inputs = card.querySelectorAll('input, textarea')
+          if (inputs[0]) inputs[0].value = item.title || ''
+          if (inputs[1]) inputs[1].value = item.company || ''
+          if (inputs[2]) inputs[2].value = item.location || ''
+          if (inputs[3]) inputs[3].value = item.startDate || ''
+          if (inputs[4]) inputs[4].value = item.endDate || ''
+          if (inputs[5]) (inputs[5] as HTMLInputElement).checked = item.current || false
+          if (inputs[6]) inputs[6].value = item.bullets?.tr || ''
+          if (inputs[7]) inputs[7].value = item.bullets?.en || ''
+        })
 
+        internshipCards.forEach((card, index) => {
+          const item = data.internships[index]
+          if (!item) return
           const inputs = card.querySelectorAll('input, textarea')
           if (inputs[0]) inputs[0].value = item.title || ''
           if (inputs[1]) inputs[1].value = item.company || ''

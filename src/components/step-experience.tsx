@@ -23,7 +23,7 @@ export default function StepExperience() {
 
       <h3 class="subsection-title">İş deneyimi</h3>
       {cvStore.data.experience.map((item) => (
-        <article class="entry-card" key={item.id}>
+        <article class="entry-card" data-import-sync="experience" key={item.id}>
           <div class="grid two-col">
             <label class="field">
               <span>Pozisyon unvanı</span>
@@ -71,7 +71,7 @@ export default function StepExperience() {
       ))}
       <h3 class="subsection-title">Stajlar</h3>
       {cvStore.data.internships.map((item) => (
-        <article class="entry-card" key={item.id}>
+        <article class="entry-card" data-import-sync="internship" key={item.id}>
           <div class="grid two-col">
             <label class="field">
               <span>Staj unvanı</span>

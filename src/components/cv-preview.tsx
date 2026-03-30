@@ -17,7 +17,7 @@ export default function CVPreview() {
         </div>
       )}
 
-      <AtsPrintPreview />
+      <AtsPrintPreview key={`preview-${cvStore.previewRevision}`} />
     </section>
   )
 }
