@@ -130,18 +130,21 @@ export default function StepReview() {
         <button class="button" click={cvStore.printAtsCv}>
           ATS PDF olarak yazdır
         </button>
-        <button class="ghost-button" click={cvStore.exportToJson}>
+        <button data-testid="export-json" class="ghost-button" click={cvStore.exportToJson}>
           JSON olarak dışa aktar
         </button>
       </div>
 
-      <div class="ats-preview-wrapper">
+      <div class="ats-preview-wrapper" data-testid="ats-preview">
         <div class="preview-toolbar">
           <p class="eyebrow">ATS yazdırma önizlemesi</p>
           <span class="preview-note">Tek sütun, standart başlıklar, sade metin odaklı</span>
         </div>
-        <AtsPrintPreview />
+        <AtsPrintPreview key={`review-preview-${cvStore.previewRevision}`} />
       </div>
     </div>
   )
 }
+
+
+

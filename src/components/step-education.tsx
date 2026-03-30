@@ -102,20 +102,20 @@ export default function StepEducation() {
 
       <h3 class="subsection-title">Kongreler ve etkinlikler</h3>
       {cvStore.data.coursesOrCongresses.map((item) => (
-        <article class="entry-card" key={item.id}>
+        <article class="entry-card" data-testid="congress-card" key={item.id}>
           <div class="grid two-col">
             <label class="field">
               <span>Etkinlik / kongre</span>
-              <input value={item.title} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'title', (event.target as HTMLInputElement).value)} />
+              <input data-testid="congress-title" value={item.title} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'title', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Konum</span>
-              <input value={item.location} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'location', (event.target as HTMLInputElement).value)} />
+              <input data-testid="congress-location" value={item.location} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'location', (event.target as HTMLInputElement).value)} />
             </label>
           </div>
           <label class="field">
             <span>Tarih</span>
-            <input value={item.date} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'date', (event.target as HTMLInputElement).value)} />
+            <input data-testid="congress-date" value={item.date} input={(event: Event) => cvStore.updateCollectionField('coursesOrCongresses', item.id, 'date', (event.target as HTMLInputElement).value)} />
           </label>
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeCongress(item.id)}>
@@ -124,7 +124,7 @@ export default function StepEducation() {
           </div>
         </article>
       ))}
-      <button class="button button-secondary" click={cvStore.addCongress}>
+      <button data-testid="add-congress" class="button button-secondary" click={cvStore.addCongress}>
         Kongre ekle
       </button>
     </div>

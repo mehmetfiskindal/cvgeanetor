@@ -443,14 +443,17 @@ class CVStore extends Store {
   }
 
   goToStep = (index: number) => {
+    this.flushFormControlsToStore()
     this.currentStep = index
   }
 
   nextStep = () => {
+    this.flushFormControlsToStore()
     this.currentStep = Math.min(this.currentStep + 1, this.steps.length - 1)
   }
 
   prevStep = () => {
+    this.flushFormControlsToStore()
     this.currentStep = Math.max(this.currentStep - 1, 0)
   }
 
@@ -471,11 +474,13 @@ class CVStore extends Store {
 
   addActivity = () => {
     this.data.activities = [...this.data.activities, createActivityItem()]
+    this.bumpFormRevision()
   }
 
   removeActivity = (id: string) => {
     if (this.data.activities.length === 1) return
     this.data.activities = this.data.activities.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
@@ -491,99 +496,119 @@ class CVStore extends Store {
 
   addEducation = () => {
     this.data.education = [...this.data.education, createEducationItem()]
+    this.bumpFormRevision()
   }
 
   removeEducation = (id: string) => {
     if (this.data.education.length === 1) return
     this.data.education = this.data.education.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addTraining = () => {
     this.data.trainings = [...this.data.trainings, createTrainingItem()]
+    this.bumpFormRevision()
   }
 
   removeTraining = (id: string) => {
     if (this.data.trainings.length === 1) return
     this.data.trainings = this.data.trainings.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addCongress = () => {
     this.data.coursesOrCongresses = [...this.data.coursesOrCongresses, createCongressItem()]
+    this.bumpFormRevision()
   }
 
   removeCongress = (id: string) => {
     if (this.data.coursesOrCongresses.length === 1) return
     this.data.coursesOrCongresses = this.data.coursesOrCongresses.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addExperience = () => {
     this.data.experience = [...this.data.experience, createExperienceItem()]
+    this.bumpFormRevision()
   }
 
   removeExperience = (id: string) => {
     this.data.experience = this.data.experience.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addInternship = () => {
     this.data.internships = [...this.data.internships, createExperienceItem()]
+    this.bumpFormRevision()
   }
 
   removeInternship = (id: string) => {
     this.data.internships = this.data.internships.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addProject = () => {
     this.data.projects = [...this.data.projects, createProjectItem()]
+    this.bumpFormRevision()
   }
 
   removeProject = (id: string) => {
     if (this.data.projects.length === 1) return
     this.data.projects = this.data.projects.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addLanguage = () => {
     this.data.languages = [...this.data.languages, createLanguageItem()]
+    this.bumpFormRevision()
   }
 
   removeLanguage = (id: string) => {
     if (this.data.languages.length === 1) return
     this.data.languages = this.data.languages.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addComputerSkill = () => {
     this.data.computerSkills = [...this.data.computerSkills, createSkillItem()]
+    this.bumpFormRevision()
   }
 
   removeComputerSkill = (id: string) => {
     if (this.data.computerSkills.length === 1) return
     this.data.computerSkills = this.data.computerSkills.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addOtherSkill = () => {
     this.data.otherSkills = [...this.data.otherSkills, createSkillItem()]
+    this.bumpFormRevision()
   }
 
   removeOtherSkill = (id: string) => {
     if (this.data.otherSkills.length === 1) return
     this.data.otherSkills = this.data.otherSkills.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 
   addReference = () => {
     this.data.references = [...this.data.references, createReferenceItem()]
+    this.bumpFormRevision()
   }
 
   removeReference = (id: string) => {
     if (this.data.references.length === 1) return
     this.data.references = this.data.references.filter((item) => item.id !== id)
+    this.bumpFormRevision()
     this.bumpPreviewRevision()
   }
 

@@ -16,7 +16,7 @@ export default function StepSidebar({ steps, currentStep, onSelectStep }: StepSi
 
       <div class="step-list">
         {steps.map((step, index) => (
-          <button key={step.id} class={`step-item ${currentStep === index ? 'is-active' : ''}`} click={() => onSelectStep(index)}>
+          <button key={step.id} data-testid={`step-${step.id}`} class={`step-item ${currentStep === index ? 'is-active' : ''}`} click={() => onSelectStep(index)}>
             <span class="step-index">0{index + 1}</span>
             <span>
               <strong>{step.title}</strong>

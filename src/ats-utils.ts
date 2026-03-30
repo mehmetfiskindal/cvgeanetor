@@ -38,6 +38,21 @@ export interface EducationLike {
   notes: LocalizedValueLike
 }
 
+export interface TrainingLike {
+  id: string
+  title: string
+  provider: string
+  date: string
+  duration: string
+}
+
+export interface CongressLike {
+  id: string
+  title: string
+  location: string
+  date: string
+}
+
 export interface ExperienceLike {
   id: string
   company: string
@@ -101,8 +116,8 @@ export interface CVDataLike {
   personalDetails: PersonalDetailsLike
   careerObjective: LocalizedValueLike
   education: EducationLike[]
-  trainings: unknown[]
-  coursesOrCongresses: unknown[]
+  trainings: TrainingLike[]
+  coursesOrCongresses: CongressLike[]
   experience: ExperienceLike[]
   internships: ExperienceLike[]
   projects: ProjectLike[]
@@ -345,6 +360,8 @@ const toCorpus = (data: CVDataLike, locale: LocaleCode) => {
     ...data.computerSkills.flatMap((item) => [item.name, getLocalizedValue(item.details, locale)]),
     ...data.otherSkills.flatMap((item) => [item.name, getLocalizedValue(item.details, locale)]),
     ...data.education.flatMap((item) => [item.school, item.faculty, item.department, item.degree, item.gpa, getLocalizedValue(item.notes, locale)]),
+    ...data.trainings.flatMap((item) => [item.title, item.provider, item.date, item.duration]),
+    ...data.coursesOrCongresses.flatMap((item) => [item.title, item.location, item.date]),
   ]
 
   return normalizeKeyword(parts.filter(Boolean).join(' '))
@@ -481,6 +498,8 @@ export const createPrintSections = (data: CVDataLike): PrintSection[] => {
           role: 'Pozisyon',
           project: 'Proje',
           school: 'Okul',
+          training: 'Eğitim',
+          event: 'Etkinlik / Kongre',
           gpa: 'GNO',
         }
       : {
@@ -495,6 +514,8 @@ export const createPrintSections = (data: CVDataLike): PrintSection[] => {
           role: 'Role',
           project: 'Project',
           school: 'School',
+          training: 'Training',
+          event: 'Event / Congress',
           gpa: 'GPA',
         }
 
@@ -569,16 +590,34 @@ export const createPrintSections = (data: CVDataLike): PrintSection[] => {
   sections.push({
     id: 'education',
     title: labels.education,
-    items: [...data.education]
-      .sort(compareByRecent)
-      .filter((item) => item.school.trim() || item.department.trim() || getLocalizedValue(item.notes, locale))
-      .map((item) => ({
-        id: item.id,
-        heading: item.school.trim() || labels.school,
-        subheading: [item.faculty.trim(), item.department.trim(), item.degree.trim()].filter(Boolean).join(' | '),
-        meta: [formatDateRange(item.startDate, item.endDate, false, locale), item.gpa.trim() ? `${labels.gpa}: ${item.gpa.trim()}` : ''].filter(Boolean).join(' | '),
-        bullets: splitLocalizedLines(item.notes, locale),
-      })),
+    items: [
+      ...[...data.education]
+        .sort(compareByRecent)
+        .filter((item) => item.school.trim() || item.department.trim() || getLocalizedValue(item.notes, locale))
+        .map((item) => ({
+          id: item.id,
+          heading: item.school.trim() || labels.school,
+          subheading: [item.faculty.trim(), item.department.trim(), item.degree.trim()].filter(Boolean).join(' | '),
+          meta: [formatDateRange(item.startDate, item.endDate, false, locale), item.gpa.trim() ? `${labels.gpa}: ${item.gpa.trim()}` : ''].filter(Boolean).join(' | '),
+          bullets: splitLocalizedLines(item.notes, locale),
+        })),
+      ...data.trainings
+        .filter((item) => item.title.trim() || item.provider.trim() || item.date.trim() || item.duration.trim())
+        .map((item) => ({
+          id: item.id,
+          heading: item.title.trim() || labels.training,
+          subheading: item.provider.trim(),
+          meta: [item.date.trim(), item.duration.trim()].filter(Boolean).join(' | '),
+        })),
+      ...data.coursesOrCongresses
+        .filter((item) => item.title.trim() || item.location.trim() || item.date.trim())
+        .map((item) => ({
+          id: item.id,
+          heading: item.title.trim() || labels.event,
+          subheading: item.location.trim(),
+          meta: item.date.trim(),
+        })),
+    ],
   })
 
   return sections

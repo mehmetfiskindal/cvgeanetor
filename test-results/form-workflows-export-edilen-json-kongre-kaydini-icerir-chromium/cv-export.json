@@ -1,0 +1,159 @@
+﻿{
+  "contact": {
+    "fullName": "Ad Soyad",
+    "email": "",
+    "phone": "",
+    "address": "",
+    "city": "",
+    "linkedin": "",
+    "website": "",
+    "photoDataUrl": ""
+  },
+  "personalDetails": {
+    "nationality": "",
+    "gender": "",
+    "birthPlace": "",
+    "birthDate": "",
+    "militaryStatus": "",
+    "maritalStatus": "",
+    "showOptionalDetails": false
+  },
+  "careerObjective": {
+    "tr": "",
+    "en": ""
+  },
+  "education": [
+    {
+      "id": "1gst60g2",
+      "school": "",
+      "faculty": "",
+      "department": "",
+      "degree": "",
+      "startDate": "",
+      "endDate": "",
+      "gpa": "",
+      "notes": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "trainings": [
+    {
+      "id": "ilsnczym",
+      "title": "",
+      "provider": "",
+      "date": "",
+      "duration": ""
+    }
+  ],
+  "coursesOrCongresses": [
+    {
+      "id": "60ys7iy2",
+      "title": "Export Kongre 1774892007545",
+      "location": "Ankara",
+      "date": "2026-04"
+    }
+  ],
+  "experience": [
+    {
+      "id": "kbaroqvw",
+      "company": "",
+      "title": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "location": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "internships": [
+    {
+      "id": "fq9m8tjr",
+      "company": "",
+      "title": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "location": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": "1z9fpcqu",
+      "name": "",
+      "role": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "url": "",
+      "keywords": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "languages": [
+    {
+      "id": "ma3m1ws8",
+      "name": "",
+      "level": "",
+      "score": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "computerSkills": [
+    {
+      "id": "i4dxtq8o",
+      "name": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "otherSkills": [
+    {
+      "id": "qpvqmydn",
+      "name": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "activities": [
+    {
+      "id": "dsw2zoel",
+      "category": "",
+      "description": ""
+    }
+  ],
+  "references": [
+    {
+      "id": "84bleuel",
+      "fullName": "",
+      "title": "",
+      "organization": "",
+      "phone": "",
+      "email": ""
+    }
+  ],
+  "referencesAvailableOnRequest": false,
+  "ats": {
+    "targetJobTitle": "",
+    "jobDescription": "",
+    "outputLanguage": "tr"
+  }
+}
