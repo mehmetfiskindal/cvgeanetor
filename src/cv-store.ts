@@ -781,7 +781,7 @@ class CVStore extends Store {
 </body>
 </html>`
 
-    const printWindow = window.open('about:blank', '_blank', 'noopener,noreferrer')
+    const printWindow = window.open('', '_blank')
     if (!printWindow) {
       window.print()
       this.setAlert('Pop-up engellendi. Tarayıcı yazdırma görünümü açıldı, tekrar deneyebilirsin.', 'error')
@@ -793,7 +793,11 @@ class CVStore extends Store {
     printWindow.document.close()
     const triggerPrint = () => {
       printWindow.focus()
-      printWindow.print()
+      window.setTimeout(() => {
+        if (!printWindow.closed) {
+          printWindow.print()
+        }
+      }, 50)
     }
     const closePrintWindow = () => {
       printWindow.removeEventListener('afterprint', closePrintWindow)
@@ -808,11 +812,7 @@ class CVStore extends Store {
     printWindow.addEventListener('afterprint', closePrintWindow)
     window.addEventListener('focus', closePrintWindow, { once: true })
 
-    if (printWindow.document.readyState === 'complete') {
-      triggerPrint()
-    } else {
-      printWindow.addEventListener('load', triggerPrint, { once: true })
-    }
+    triggerPrint()
 
     this.setAlert('ATS PDF yazdırma dokümanı oluşturuldu. Önizleme ile aynı bölümler kullanılarak yazdırılıyor.', 'success')
   }
