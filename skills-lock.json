@@ -4,12 +4,17 @@
     "gea-framework": {
       "source": "dashersw/gea",
       "sourceType": "github",
-      "computedHash": "e6d6cf6dfc059bb863deb5eae7f882ca07f2bb406aee15fd647cc40391f2d492"
+      "computedHash": "7d5133e5c99d742c94caeb2d580cdf85800dd367d819544235520a4239238316"
     },
     "gea-ui-components": {
       "source": "dashersw/gea",
       "sourceType": "github",
-      "computedHash": "06ac19b6a4dc9cea1b464edacf220f7799b6a41851b39cd38506d6707481b56e"
+      "computedHash": "bdd7d2eec07fdea6dd0b860bd5d642e7eb3716c4da20451e72c6bc3bd0879099"
+    },
+    "playground-browser-bundles": {
+      "source": "dashersw/gea",
+      "sourceType": "github",
+      "computedHash": "2b839f40743ad270e98179fcfd751cfa7be9db52f67a34d60364d6cedbfc0c74"
     }
   }
 }

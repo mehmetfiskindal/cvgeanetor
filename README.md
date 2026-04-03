@@ -46,7 +46,9 @@ Ardindan terminalde verilen local URL'i tarayicida acin (genelde `http://localho
 ## Komutlar
 
 - `npm run dev`: Gelistirme sunucusunu baslatir
+- `npm run dev:ssr`: SSR (server-side rendering) modunda gelistirme sunucusunu baslatir
 - `npm run build`: Production build olusturur (`dist/`)
+- `npm run build:ssr`: Client build + SSR server bundle olusturur (`dist/` ve `dist/server/`)
 - `npm run preview`: Build cikisini lokal olarak onizler
 - `npm test`: ATS yardimci fonksiyon testlerini calistirir
 

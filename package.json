@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:ssr": "vite --mode ssr",
     "build": "vite build",
+    "build:ssr": "npm run build && vite build --mode ssr --ssr src/entry-server.ts --outDir dist/server",
     "preview": "vite preview",
     "test": "node --test --experimental-strip-types tests/ats-utils.test.mjs",
     "test:e2e": "playwright test",
@@ -13,10 +15,12 @@
     "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
-    "@geajs/core": "^1.0.29"
+    "@geajs/core": "^1.1.1",
+    "@geajs/ssr": "^1.0.2",
+    "@geajs/ui": "^0.2.0"
   },
   "devDependencies": {
-    "@geajs/vite-plugin": "^1.0.28",
+    "@geajs/vite-plugin": "^1.1.0",
     "@playwright/test": "^1.58.2",
     "typescript": "^5.9.3",
     "vite": "^8.0.0"
