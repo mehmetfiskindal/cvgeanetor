@@ -1,0 +1,58 @@
+name: Bug report
+description: Beklenmeyen bir davranisi veya hatayi raporla
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rapor icin tesekkurler. Ne oldugunu ve nasil tekrarlandigini ne kadar net yazarsan, duzeltmek o kadar kolay olur.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Sorun ozeti
+      description: Ne oldu?
+      placeholder: CV yazdir dedigimde PDF bos geliyor.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Tekrarlama adimlari
+      description: Hatayi tekrar etmek icin adimlari yaz
+      placeholder: |
+        1. Step 8'e git
+        2. ATS PDF olarak yazdir butonuna tikla
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Beklenen davranis
+      placeholder: Dolu ATS onizlemesiyle ayni icerik gelmeliydi.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Gercek davranis
+      placeholder: Yeni sekmede bos sayfa aciliyor.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Tarayici
+      placeholder: Chrome 135 / Safari 18 / Firefox 127
+  - type: input
+    id: device
+    attributes:
+      label: Cihaz veya isletim sistemi
+      placeholder: macOS 15 / Windows 11 / iPhone
+  - type: textarea
+    id: extra
+    attributes:
+      label: Ek notlar
+      description: Ekran goruntusu, konsol hatasi veya ilgili baska baglam

@@ -1,0 +1,34 @@
+name: Feature request
+description: Yeni bir ozellik veya iyilestirme oner
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Yeni fikirler icin tesekkurler. Ozellikle kim icin, hangi sorunu cozdugu ve beklenen cikti burada cok degerli.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Cozulmek istenen problem
+      placeholder: Katkicilar hangi alanlarda yardim edebilecegini hizla gorebilmeli.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Onerilen cozum
+      placeholder: README'ye roadmap ve good first issue etiketi yonlendirmesi eklenebilir.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Dusunulen alternatifler
+      placeholder: Bunu GitHub Discussions ile de yonetebiliriz.
+  - type: textarea
+    id: context
+    attributes:
+      label: Ek baglam
+      placeholder: Tasarim, teknik sinirlar veya referans linkleri

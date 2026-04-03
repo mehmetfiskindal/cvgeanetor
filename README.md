@@ -95,6 +95,16 @@ Yayin adresi genel olarak su formatta olur:
 
 Pull request'ler memnuniyetle kabul edilir. Buyuk degisiklikler icin once bir issue acip neyi degistirmek istediginizi tartisabilirsiniz.
 
+Katki surecini kolaylastirmak icin su GitHub entegrasyonlari eklendi:
+
+- `CONTRIBUTING.md`: Katki akisi, branch adlandirma ve kontrol listesi
+- GitHub issue template'leri: bug report ve feature request
+- Pull request template'i: test ve degisiklik ozeti icin standart format
+- CI workflow: PR'larda test ve build dogrulamasi
+- GitHub Pages workflow: `master` branch uzerinden otomatik yayin
+
+Katki vermeden once [CONTRIBUTING.md](./CONTRIBUTING.md) dosyasini incelemeniz onerilir.
+
 ## Lisans
 
 Bu proje icin henuz bir lisans dosyasi eklenmemistir. Acik kaynak paylasim dusunuyorsaniz `LICENSE` dosyasi eklemeniz onerilir.
