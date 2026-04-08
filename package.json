@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@geajs/core": "^1.2.3",
+    "@geajs/ssr": "^1.0.2",
     "@geajs/ui": "^0.2.4"
   },
   "devDependencies": {
