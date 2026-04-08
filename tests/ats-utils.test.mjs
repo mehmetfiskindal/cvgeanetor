@@ -12,7 +12,7 @@ const createData = () => ({
     city: 'Istanbul',
     linkedin: 'linkedin.com/in/mehmet',
     website: 'fikeyword.app',
-    photoDataUrl: 'data:image/png;base64,abc',
+    photoDataUrl: '',
   },
   personalDetails: {
     nationality: '',
@@ -40,8 +40,8 @@ const createData = () => ({
       notes: { tr: '', en: 'Relevant coursework in mobile app development.' },
     },
   ],
-  trainings: [],
-  coursesOrCongresses: [],
+  trainings: [{ id: 'training-1', title: 'Mobile CI/CD', provider: 'Acme', date: '2024-08', duration: '8 saat' }],
+  coursesOrCongresses: [{ id: 'event-1', title: 'DevFest', location: 'Istanbul', date: '2024-09' }],
   experience: [
     {
       id: 'exp-1',
@@ -86,28 +86,25 @@ const createData = () => ({
   computerSkills: [
     {
       id: 'skill-1',
-      name: 'Flutter',
-      details: { tr: '', en: 'Firebase, REST API, mobile architecture' },
+      name: 'Core Stack',
+      details: { tr: '', en: 'Flutter, Firebase, REST API, App Store, Google Play' },
     },
   ],
   otherSkills: [
     {
       id: 'skill-2',
-      name: 'CI/CD',
-      details: { tr: '', en: 'Release automation and store deployment' },
+      name: 'Delivery',
+      details: { tr: '', en: 'CI/CD, release automation and store deployment' },
     },
   ],
-  activities: {
-    interests: 'Running',
-    memberships: '',
-    volunteerWork: '',
-  },
+  activities: [{ id: 'activity-1', category: 'Community', description: '' }],
   references: [],
   referencesAvailableOnRequest: false,
   ats: {
     targetJobTitle: 'Flutter Developer',
-    jobDescription: 'Flutter\nFirebase\nREST API\nCI/CD',
+    jobDescription: 'Flutter\nFirebase\nREST API\nCI/CD\nPlay Console',
     outputLanguage: 'en',
+    templateId: 'ats-safe',
   },
 })
 
@@ -122,17 +119,55 @@ test('getLocalizedValue falls back to the other language', () => {
   assert.equal(getLocalizedValue({ tr: '', en: 'English only summary' }, 'tr', false), '')
 })
 
-test('analyzeAts reports matched and missing keywords', () => {
+test('analyzeAts returns explainable score breakdown and keyword analysis', () => {
+  const audit = analyzeAts(createData())
+
+  assert.ok(audit.score > 0)
+  assert.ok(audit.scoreBreakdown.length >= 10)
+  assert.ok(audit.checks.some((item) => item.code === 'keyword-match'))
+  assert.ok(audit.checks.some((item) => item.code === 'layout-risk' && item.status === 'pass'))
+  assert.ok(audit.keywordAnalysis.detectedKeywords.includes('Flutter'))
+  assert.ok(audit.keywordAnalysis.matches.some((item) => item.keyword === 'Firebase'))
+  assert.ok(audit.keywordAnalysis.missing.includes('Play Console'))
+  assert.ok(Array.isArray(audit.keywordAnalysis.suggestedSkills))
+})
+
+test('analyzeAts flags long paragraph and mixed date formats', () => {
   const data = createData()
-  data.otherSkills = []
+  data.careerObjective.en = 'This is a very long paragraph. It keeps going without structure. It keeps adding context without stopping. It becomes difficult to scan because it is one block of text designed to trigger the paragraph rule.'
+  data.experience[0].bullets.en = 'Worked on app improvements without strong structure or metrics and without line breaks so that the paragraph remains dense and hard to scan for ATS systems.'
+  data.trainings.push({ id: 'training-2', title: 'Another', provider: 'Acme', date: 'August 2024', duration: '2h' })
 
   const audit = analyzeAts(data)
 
-  assert.ok(audit.score > 0)
-  assert.deepEqual(audit.matchedKeywords, ['Flutter', 'Firebase', 'REST API'])
-  assert.deepEqual(audit.missingKeywords, ['CI/CD'])
-  assert.ok(audit.findings.some((item) => item.code === 'missing keyword'))
-  assert.ok(audit.findings.some((item) => item.code === 'hidden from ATS print'))
+  assert.equal(audit.checks.find((item) => item.code === 'long-paragraphs')?.status, 'warn')
+  assert.notEqual(audit.checks.find((item) => item.code === 'date-consistency')?.status, 'pass')
+})
+
+test('analyzeAts penalizes weak action verbs and duplicated skills', () => {
+  const data = createData()
+  data.experience[0].bullets.en = 'Responsible for mobile work.\nHelped backend team.'
+  data.projects[0].keywords = 'Flutter, Flutter, Firebase'
+  data.computerSkills[0].name = 'Flutter, Firebase, REST API, CI/CD'
+
+  const audit = analyzeAts(data)
+
+  assert.equal(audit.checks.find((item) => item.code === 'action-verbs')?.status, 'warn')
+  assert.notEqual(audit.checks.find((item) => item.code === 'skills-grouping')?.status, 'pass')
+})
+
+test('analyzeAts creates correction warnings for low-scoring inputs', () => {
+  const data = createData()
+  data.contact.email = ''
+  data.careerObjective.en = ''
+  data.experience[0].bullets.en = 'Worked on app tasks.'
+
+  const audit = analyzeAts(data)
+
+  assert.ok(audit.correctionWarnings.some((item) => item.relatedCheckCode === 'contact-complete'))
+  assert.ok(audit.correctionWarnings.some((item) => item.relatedCheckCode === 'summary-present'))
+  assert.ok(audit.correctionWarnings.some((item) => item.relatedCheckCode === 'bullet-structure'))
+  assert.ok(audit.correctionWarnings.some((item) => item.relatedCheckCode === 'measurable-results'))
 })
 
 test('compareByRecent sorts active items first', () => {
@@ -152,8 +187,7 @@ test('compareByRecent sorts active items first', () => {
 })
 
 test('createPrintSections preserves ATS section order and content', () => {
-  const data = createData()
-  const sections = createPrintSections(data)
+  const sections = createPrintSections(createData())
 
   assert.deepEqual(
     sections.map((section) => section.id),

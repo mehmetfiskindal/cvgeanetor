@@ -24,7 +24,7 @@
   },
   "education": [
     {
-      "id": "qdovet8j",
+      "id": "om0ssx7g",
       "school": "",
       "faculty": "",
       "department": "",
@@ -40,7 +40,7 @@
   ],
   "trainings": [
     {
-      "id": "r7ygpni8",
+      "id": "k5wtdvjj",
       "title": "",
       "provider": "",
       "date": "",
@@ -49,15 +49,15 @@
   ],
   "coursesOrCongresses": [
     {
-      "id": "92veusue",
-      "title": "Export Kongre 1774962715654",
+      "id": "v8jqzjcm",
+      "title": "Export Kongre 1775650939229",
       "location": "Ankara",
       "date": "2026-04"
     }
   ],
   "experience": [
     {
-      "id": "kb7vmn94",
+      "id": "kljkvrnr",
       "company": "",
       "title": "",
       "startDate": "",
@@ -72,7 +72,7 @@
   ],
   "internships": [
     {
-      "id": "9mg6ee16",
+      "id": "ka4cnrvv",
       "company": "",
       "title": "",
       "startDate": "",
@@ -87,7 +87,7 @@
   ],
   "projects": [
     {
-      "id": "2qbdjag4",
+      "id": "axsvztm3",
       "name": "",
       "role": "",
       "startDate": "",
@@ -103,7 +103,7 @@
   ],
   "languages": [
     {
-      "id": "756y2op8",
+      "id": "57ewz73l",
       "name": "",
       "level": "",
       "score": "",
@@ -115,7 +115,7 @@
   ],
   "computerSkills": [
     {
-      "id": "jsr95iax",
+      "id": "t1dya06m",
       "name": "",
       "details": {
         "tr": "",
@@ -125,7 +125,7 @@
   ],
   "otherSkills": [
     {
-      "id": "chyuxi6j",
+      "id": "ltbvbs85",
       "name": "",
       "details": {
         "tr": "",
@@ -135,14 +135,14 @@
   ],
   "activities": [
     {
-      "id": "hmx1l9d6",
+      "id": "1dpc0hjg",
       "category": "",
       "description": ""
     }
   ],
   "references": [
     {
-      "id": "0hg7qck6",
+      "id": "pcpu9ym2",
       "fullName": "",
       "title": "",
       "organization": "",
@@ -154,6 +154,7 @@
   "ats": {
     "targetJobTitle": "",
     "jobDescription": "",
-    "outputLanguage": "tr"
+    "outputLanguage": "tr",
+    "templateId": "ats-safe"
   }
 }

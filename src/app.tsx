@@ -12,11 +12,10 @@ export default class App extends Component {
         <section className="hero-card">
           <div>
             <p className="eyebrow">ATS CV Builder</p>
-            <h1>ATS uyumlu CV oluştur, denetle ve PDF olarak yazdır.</h1>
+            <h1>ATS uyumlu CV oluştur, neden düşük/yüksek skor aldığını gör ve PDF olarak yazdır.</h1>
           </div>
           <p className="hero-copy">
-            Formu adım adım doldur, anahtar kelime eşleşmelerini gör, ATS risklerini denetle ve tek sütun yazdırma
-            görünümü ile PDF al.
+            7 adımlı akışla CV’ni doldur, iş ilanı anahtar kelime eşleşmelerini kaynak bazlı incele, explainable ATS audit ile riskleri gör ve PDF al.
           </p>
           <JsonDropZone />
         </section>

@@ -1,24 +1,34 @@
 import cvStore from '../cv-store'
+import SuggestionDrafts from './suggestion-drafts'
+
+const localeLabel = (locale: 'tr' | 'en') => (locale === 'tr' ? 'TR' : 'EN')
 
 export default function StepExperience() {
+  const locale = cvStore.primaryLocale
+
   return (
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alanı</p>
-          <h2>İş ve staj deneyimi</h2>
-          <p class="section-copy">Her işyeri için ayrı bir kart ekle. 2-3 farklı yerde çalıştıysan her birini ayrı deneyim olarak yaz; önizleme ters kronolojik olarak sıralar.</p>
+          <p class="eyebrow">Adım 3</p>
+          <h2>Deneyim</h2>
+          <p class="section-copy">İş ve staj kayıtlarını tek akışta düzenle. Her kayıt için mikro kontroller ile madde yapısını, profesyonellik düzeyini ve etki sinyallerini kontrol et.</p>
         </div>
-        <p class="hint-chip">Birden fazla iş deneyimi ekleyebilirsin; her kart ayrı sıralanır ve ATS çıktısında tek tek görünür.</p>
+        <p class="hint-chip">Tek paragraf yerine en az 2 bullet, mümkünse metrik ve action verb ile yaz.</p>
       </header>
 
       <div class="summary-card compact-card">
         <p>
-          İş deneyimi kaydı: <strong>{cvStore.data.experience.length}</strong>
+          Toplam kayıt: <strong>{cvStore.data.experience.length + cvStore.data.internships.length}</strong>
         </p>
-        <button class="button" click={cvStore.addExperience}>
-          Yeni iş deneyimi ekle
-        </button>
+        <div class="entry-actions">
+          <button class="button" click={cvStore.addExperience}>
+            Bir deneyim daha ekle
+          </button>
+          <button class="button button-secondary" click={cvStore.addInternship}>
+            Staj ekle
+          </button>
+        </div>
       </div>
 
       <h3 class="subsection-title">İş deneyimi</h3>
@@ -51,16 +61,40 @@ export default function StepExperience() {
             </label>
           </div>
 
+          <div class="micro-actions">
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('experience', item.id, 'experience-generate-bullets', cvStore.primaryLocale)}>
+              Madde yapısını kontrol et
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('experience', item.id, 'experience-professionalize', cvStore.primaryLocale)}>
+              Profesyonellik kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('experience', item.id, 'experience-impact', cvStore.primaryLocale)}>
+              Etki odak kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('experience', item.id, 'experience-star', cvStore.primaryLocale)}>
+              STAR kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('experience', item.id, 'experience-cleanup', cvStore.primaryLocale)}>
+              Zayıf kelime kontrolü
+            </button>
+          </div>
+
           <div class="grid two-col">
             <label class="field">
-              <span>Sorumluluklar ve katkılar (TR)</span>
-              <textarea rows="5" value={item.bullets.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('experience', item.id, 'bullets', 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <span>Bullet satırları ({localeLabel(locale)})</span>
+              <textarea rows="6" value={item.bullets[locale]} input={(event: Event) => cvStore.updateCollectionLocalizedField('experience', item.id, 'bullets', cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
-              <span>Sorumluluklar ve katkılar (EN)</span>
-              <textarea rows="5" value={item.bullets.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('experience', item.id, 'bullets', 'en', (event.target as HTMLTextAreaElement).value)} />
+              <span>İkincil dil ({localeLabel(cvStore.secondaryLocale)})</span>
+              <textarea
+                rows="6"
+                value={item.bullets[cvStore.secondaryLocale]}
+                input={(event: Event) => cvStore.updateCollectionLocalizedField('experience', item.id, 'bullets', cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
+              />
             </label>
           </div>
+
+          <SuggestionDrafts drafts={cvStore.draftsByTarget('experience', item.id, locale)} />
 
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeExperience(item.id)}>
@@ -69,6 +103,7 @@ export default function StepExperience() {
           </div>
         </article>
       ))}
+
       <h3 class="subsection-title">Stajlar</h3>
       {cvStore.data.internships.map((item) => (
         <article class="entry-card" key={item.id}>
@@ -99,16 +134,40 @@ export default function StepExperience() {
             </label>
           </div>
 
+          <div class="micro-actions">
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('internships', item.id, 'experience-generate-bullets', cvStore.primaryLocale)}>
+              Madde yapısını kontrol et
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('internships', item.id, 'experience-professionalize', cvStore.primaryLocale)}>
+              Profesyonellik kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('internships', item.id, 'experience-impact', cvStore.primaryLocale)}>
+              Etki odak kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('internships', item.id, 'experience-star', cvStore.primaryLocale)}>
+              STAR kontrolü
+            </button>
+            <button class="ghost-button" click={() => cvStore.generateExperienceDrafts('internships', item.id, 'experience-cleanup', cvStore.primaryLocale)}>
+              Zayıf kelime kontrolü
+            </button>
+          </div>
+
           <div class="grid two-col">
             <label class="field">
-              <span>Sorumluluklar ve katkılar (TR)</span>
-              <textarea rows="5" value={item.bullets.tr} input={(event: Event) => cvStore.updateCollectionLocalizedField('internships', item.id, 'bullets', 'tr', (event.target as HTMLTextAreaElement).value)} />
+              <span>Bullet satırları ({localeLabel(locale)})</span>
+              <textarea rows="6" value={item.bullets[locale]} input={(event: Event) => cvStore.updateCollectionLocalizedField('internships', item.id, 'bullets', cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
-              <span>Sorumluluklar ve katkılar (EN)</span>
-              <textarea rows="5" value={item.bullets.en} input={(event: Event) => cvStore.updateCollectionLocalizedField('internships', item.id, 'bullets', 'en', (event.target as HTMLTextAreaElement).value)} />
+              <span>İkincil dil ({localeLabel(cvStore.secondaryLocale)})</span>
+              <textarea
+                rows="6"
+                value={item.bullets[cvStore.secondaryLocale]}
+                input={(event: Event) => cvStore.updateCollectionLocalizedField('internships', item.id, 'bullets', cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
+              />
             </label>
           </div>
+
+          <SuggestionDrafts drafts={cvStore.draftsByTarget('internships', item.id, locale)} />
 
           <div class="entry-actions">
             <button class="ghost-button" click={() => cvStore.removeInternship(item.id)}>
@@ -117,11 +176,6 @@ export default function StepExperience() {
           </div>
         </article>
       ))}
-      <button class="button button-secondary" click={cvStore.addInternship}>
-        Staj ekle
-      </button>
     </div>
   )
 }
-
-

@@ -1,13 +1,11 @@
 import cvStore from '../cv-store'
-import StepActivities from './step-activities'
 import StepContact from './step-contact'
 import StepEducation from './step-education'
 import StepExperience from './step-experience'
 import StepObjective from './step-objective'
+import StepPreview from './step-preview'
 import StepProjects from './step-projects'
-import StepReferences from './step-references'
 import StepReview from './step-review'
-import StepSkills from './step-skills'
 
 interface StepFormProps {
   currentStep: number
@@ -27,25 +25,19 @@ export default function StepForm({ currentStep, stepCount }: StepFormProps) {
         <StepObjective />
       </div>
       <div style={currentStep === 2 ? show : hide}>
-        <StepEducation />
-      </div>
-      <div style={currentStep === 3 ? show : hide}>
         <StepExperience />
       </div>
-      <div style={currentStep === 4 ? show : hide}>
+      <div style={currentStep === 3 ? show : hide}>
         <StepProjects />
       </div>
+      <div style={currentStep === 4 ? show : hide}>
+        <StepEducation />
+      </div>
       <div style={currentStep === 5 ? show : hide}>
-        <StepSkills />
+        <StepReview />
       </div>
       <div style={currentStep === 6 ? show : hide}>
-        <StepActivities />
-      </div>
-      <div style={currentStep === 7 ? show : hide}>
-        <StepReferences />
-      </div>
-      <div style={currentStep === 8 ? show : hide}>
-        <StepReview />
+        <StepPreview />
       </div>
 
       <footer className="wizard-footer">

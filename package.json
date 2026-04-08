@@ -9,7 +9,7 @@
     "build": "vite build",
     "build:ssr": "npm run build && vite build --mode ssr --ssr src/entry-server.ts --outDir dist/server",
     "preview": "vite preview",
-    "test": "node --test --experimental-strip-types tests/ats-utils.test.mjs",
+    "test": "node --test --experimental-strip-types tests/*.test.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install chromium"

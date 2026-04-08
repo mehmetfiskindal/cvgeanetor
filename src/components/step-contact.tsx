@@ -7,11 +7,11 @@ export default function StepContact() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Form alanı</p>
+          <p class="eyebrow">Adım 1</p>
           <h2>Kişisel ve iletişim bilgileri</h2>
-          <p class="section-copy">CV'nin en üstünde yer alacak iletişim bilgilerini tamamla. Ek kişisel bilgiler varsayılan olarak kapalı.</p>
+          <p class="section-copy">CV’nin en üstünde görünecek temel iletişim bilgisini tamamla. Fotoğraf ve ek kişisel alanlar isteğe bağlıdır; ATS export bunları otomatik olarak kritik içerikten ayırır.</p>
         </div>
-        <p class="hint-chip">Fotoğraf ve ek kişisel bilgiler kayıtta kalır ama ATS yazdırma çıktısında gizlenir.</p>
+        <p class="hint-chip">Fotoğraf kayıtta kalabilir ama export için kapalı tutman önerilir.</p>
       </header>
 
       <div class="grid two-col">

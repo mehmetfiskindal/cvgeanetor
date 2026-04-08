@@ -1,5 +1,22 @@
 import { Store } from '@geajs/core'
-import { analyzeAts, compareByRecent, createPrintSections, formatMonth as formatLocalizedMonth, getLocalizedValue, type AtsAuditResult, type LocaleCode, type PrintSection } from './ats-utils'
+import {
+  analyzeAts,
+  compareByRecent,
+  createPrintSections,
+  formatMonth as formatLocalizedMonth,
+  getAtsTemplateProfile,
+  getLocalizedValue,
+  type AtsAuditResult,
+  type LocaleCode,
+  type PrintSection,
+  type SuggestionDraft,
+} from './ats-utils'
+import {
+  createExperienceDraft,
+  createJobMatchDrafts,
+  createProjectDraft,
+  createSummaryDrafts,
+} from './suggestion-engine'
 
 type AlertTone = 'info' | 'success' | 'error'
 
@@ -112,6 +129,7 @@ export interface AtsSettings {
   targetJobTitle: string
   jobDescription: string
   outputLanguage: LocaleCode
+  templateId: string
 }
 
 export interface CVData {
@@ -153,15 +171,13 @@ export interface StepMeta {
 }
 
 const STEP_META: StepMeta[] = [
-  { id: 0, title: 'Kişisel ve iletişim', description: 'İsim, iletişim ve isteğe bağlı ek bilgiler.' },
-  { id: 1, title: 'Profesyonel Özet', description: 'Hedef role uygun, ATS dostu özet yaz.' },
-  { id: 2, title: 'Eğitim bilgileri', description: 'Ters kronolojik sırayla okul, eğitim ve kongreler.' },
-  { id: 3, title: 'İş deneyimi', description: 'Deneyimleri ölçülebilir bullet satırlarıyla gir.' },
-  { id: 4, title: 'Projeler', description: 'Yayına alınmış ürünleri, stack ve etkileriyle ekle.' },
-  { id: 5, title: 'Beceriler', description: 'Tech stack, diller ve diğer yetkinlikleri grupla.' },
-  { id: 6, title: 'Faaliyetler', description: 'İsteğe bağlı ilgiler, üyelikler ve gönüllülük.' },
-  { id: 7, title: 'Referanslar', description: 'Veride kalsın ama ATS baskıda gizli olsun.' },
-  { id: 8, title: 'ATS kontrol', description: 'Skoru incele, eksikleri gör ve PDF olarak yazdır.' },
+  { id: 0, title: 'Kişisel bilgiler', description: 'İletişim, fotoğraf ve opsiyonel kişisel alanlar.' },
+  { id: 1, title: 'Profesyonel özet', description: 'Özetini hedef role göre kontrol et ve eksiklerini gör.' },
+  { id: 2, title: 'Deneyim', description: 'İş ve staj deneyimini bullet yapısı, etki ve ton açısından kontrol et.' },
+  { id: 3, title: 'Projeler', description: 'Projeleri stack, yayın ve etki ile destekle.' },
+  { id: 4, title: 'Eğitim ve beceriler', description: 'Eğitim, sertifika ve skill gruplarını tek adımda düzenle.' },
+  { id: 5, title: 'İş ilanı eşleştirme', description: 'Keyword eşleşmesini, eksikleri ve kontrol sonuçlarını gör.' },
+  { id: 6, title: 'Önizleme + PDF', description: 'Son kontrolü yap ve export al.' },
 ]
 
 const uid = () => Math.random().toString(36).slice(2, 10)
@@ -284,6 +300,7 @@ const createDefaultData = (): CVData => ({
     targetJobTitle: '',
     jobDescription: '',
     outputLanguage: 'tr',
+    templateId: 'ats-safe',
   },
 })
 
@@ -314,20 +331,13 @@ const tryRecoverMojibake = (value: string) => {
 }
 
 const normalizeImportedText = <T>(value: T): T => {
-  if (typeof value === 'string') {
-    return tryRecoverMojibake(value) as T
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) => normalizeImportedText(item)) as T
-  }
-
+  if (typeof value === 'string') return tryRecoverMojibake(value) as T
+  if (Array.isArray(value)) return value.map((item) => normalizeImportedText(item)) as T
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, entryValue]) => [key, normalizeImportedText(entryValue)]),
     ) as T
   }
-
   return value
 }
 
@@ -337,9 +347,23 @@ class CVStore extends Store {
   previewRevision = 0
   formRevision = 0
   data: CVData = cloneDefaultData()
+  helperDrafts: SuggestionDraft[] = []
+  openDraftIds: string[] = []
   alert = {
     message: '',
     tone: 'info' as AlertTone,
+  }
+
+  get primaryLocale() {
+    return this.data.ats.outputLanguage
+  }
+
+  get secondaryLocale() {
+    return this.data.ats.outputLanguage === 'tr' ? 'en' : 'tr'
+  }
+
+  get templateProfile() {
+    return getAtsTemplateProfile()
   }
 
   bumpPreviewRevision = () => {
@@ -366,6 +390,17 @@ class CVStore extends Store {
   ) {
     this.data[key] = this.data[key].map((item) => (item.id === id ? updater(item) : item)) as CVData[K]
     this.bumpPreviewRevision()
+  }
+
+  private replaceDraftsForTarget = (predicate: (draft: SuggestionDraft) => boolean, drafts: SuggestionDraft[]) => {
+    this.helperDrafts = [...this.helperDrafts.filter((draft) => !predicate(draft)), ...drafts]
+    this.openDraftIds = this.openDraftIds.filter((id) => this.helperDrafts.some((draft) => draft.id === id))
+    this.bumpFormRevision()
+  }
+
+  private showDrafts = (drafts: SuggestionDraft[]) => {
+    this.openDraftIds = [...this.openDraftIds, ...drafts.map((draft) => draft.id)].filter((id, index, array) => array.indexOf(id) === index)
+    this.bumpFormRevision()
   }
 
   updateCollectionField = <K extends CollectionKey, F extends keyof CVData[K][number]>(
@@ -417,8 +452,19 @@ class CVStore extends Store {
     return [...this.data.projects].sort(compareByRecent)
   }
 
+  get combinedExperience() {
+    return [
+      ...this.data.experience.map((item) => ({ ...item, collection: 'experience' as const, label: 'İş deneyimi' })),
+      ...this.data.internships.map((item) => ({ ...item, collection: 'internships' as const, label: 'Staj' })),
+    ].sort(compareByRecent)
+  }
+
   get atsAudit(): AtsAuditResult {
-    return analyzeAts(this.data)
+    const audit = analyzeAts(this.data)
+    return {
+      ...audit,
+      helperDrafts: [...this.helperDrafts],
+    }
   }
 
   get matchedKeywords() {
@@ -431,6 +477,68 @@ class CVStore extends Store {
 
   get printSections(): PrintSection[] {
     return createPrintSections(this.data)
+  }
+
+  get draftsByTarget() {
+    return (type: SuggestionDraft['target']['type'], id?: string, locale?: LocaleCode) =>
+      this.helperDrafts.filter((draft) => draft.target.type === type && (!id || draft.target.id === id) && (!locale || draft.target.locale === locale))
+  }
+
+  isDraftPreviewOpen = (id: string) => this.openDraftIds.includes(id)
+
+  toggleDraftPreview = (id: string) => {
+    this.openDraftIds = this.openDraftIds.includes(id) ? this.openDraftIds.filter((item) => item !== id) : [...this.openDraftIds, id]
+    this.bumpFormRevision()
+  }
+
+  discardDraft = (id: string) => {
+    this.helperDrafts = this.helperDrafts.filter((draft) => draft.id !== id)
+    this.openDraftIds = this.openDraftIds.filter((item) => item !== id)
+    this.bumpFormRevision()
+  }
+
+  generateSummaryDrafts = (actionId: string, locale: LocaleCode = this.primaryLocale) => {
+    const drafts = createSummaryDrafts(this.data, locale, actionId)
+    if (drafts.length === 0) {
+      this.setAlert('Bu aksiyon için yeterli veri bulunamadı.', 'error')
+      return
+    }
+    this.replaceDraftsForTarget((draft) => draft.target.type === 'careerObjective' && draft.target.locale === locale, drafts)
+    this.showDrafts(drafts)
+  }
+
+  generateExperienceDrafts = (collection: 'experience' | 'internships', id: string, actionId: string, locale: LocaleCode = this.primaryLocale) => {
+    const item = this.data[collection].find((entry) => entry.id === id)
+    if (!item) return
+    const drafts = createExperienceDraft(this.data, item, locale, actionId, collection)
+    if (drafts.length === 0) {
+      this.setAlert('Deneyim kontrol sonucu oluşturulamadı.', 'error')
+      return
+    }
+    this.replaceDraftsForTarget((draft) => draft.target.type === collection && draft.target.id === id && draft.target.locale === locale, drafts)
+    this.showDrafts(drafts)
+  }
+
+  generateProjectDrafts = (id: string, actionId: string, locale: LocaleCode = this.primaryLocale) => {
+    const item = this.data.projects.find((entry) => entry.id === id)
+    if (!item) return
+    const drafts = createProjectDraft(this.data, item, locale, actionId)
+    if (drafts.length === 0) {
+      this.setAlert('Proje kontrol sonucu oluşturulamadı.', 'error')
+      return
+    }
+    this.replaceDraftsForTarget((draft) => draft.target.type === 'projects' && draft.target.id === id && draft.target.locale === locale, drafts)
+    this.showDrafts(drafts)
+  }
+
+  generateJobMatchDrafts = (actionId: string, locale: LocaleCode = this.primaryLocale) => {
+    const drafts = createJobMatchDrafts(this.data, locale, actionId)
+    if (drafts.length === 0) {
+      this.setAlert('İş ilanı bazlı kontrol sonucu oluşturulamadı.', 'error')
+      return
+    }
+    this.replaceDraftsForTarget((draft) => drafts.some((newDraft) => draft.target.type === newDraft.target.type && draft.target.locale === newDraft.target.locale), drafts)
+    this.showDrafts(drafts)
   }
 
   setAlert(message: string, tone: AlertTone = 'info') {
@@ -634,11 +742,7 @@ class CVStore extends Store {
       const normalizedParsed = normalizeImportedText(parsed)
       const merged = this.mergeWithDefaults(normalizedParsed)
 
-      // Replace entire data object
       this.data = merged as CVData
-
-      // Force array re-renders by triggering change detection on array properties
-      // This is necessary for Gea's list rendering in components like experience
       this.data.experience = [...this.data.experience]
       this.data.internships = [...this.data.internships]
       this.data.projects = [...this.data.projects]
@@ -647,6 +751,8 @@ class CVStore extends Store {
       this.data.computerSkills = [...this.data.computerSkills]
       this.data.otherSkills = [...this.data.otherSkills]
       this.data.activities = [...this.data.activities]
+      this.helperDrafts = []
+      this.openDraftIds = []
       this.bumpFormRevision()
       this.bumpPreviewRevision()
 
@@ -658,7 +764,6 @@ class CVStore extends Store {
       return false
     }
   }
-
 
   exportToJson = () => {
     this.flushFormControlsToStore()
@@ -739,7 +844,7 @@ class CVStore extends Store {
     body {
       margin: 0;
       color: #111827;
-      font: 16px/1.45 "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font: 16px/1.45 Arial, Calibri, Helvetica, Georgia, sans-serif;
       font-weight: 400;
       font-synthesis: none;
       font-variant-ligatures: none;
@@ -781,40 +886,63 @@ class CVStore extends Store {
 </body>
 </html>`
 
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) {
-      window.print()
-      this.setAlert('Pop-up engellendi. Tarayıcı yazdırma görünümü açıldı, tekrar deneyebilirsin.', 'error')
+    const existingFrame = document.getElementById('ats-print-frame')
+    if (existingFrame?.parentNode) {
+      existingFrame.parentNode.removeChild(existingFrame)
+    }
+
+    const iframe = document.createElement('iframe')
+    iframe.id = 'ats-print-frame'
+    iframe.setAttribute('aria-hidden', 'true')
+    iframe.style.position = 'fixed'
+    iframe.style.right = '0'
+    iframe.style.bottom = '0'
+    iframe.style.width = '0'
+    iframe.style.height = '0'
+    iframe.style.border = '0'
+    iframe.style.opacity = '0'
+    document.body.appendChild(iframe)
+
+    const frameWindow = iframe.contentWindow
+    const frameDocument = iframe.contentDocument || frameWindow?.document
+
+    if (!frameWindow || !frameDocument) {
+      iframe.remove()
+      this.setAlert('PDF yazdırma görünümü oluşturulamadı.', 'error')
       return
     }
 
-    printWindow.document.open()
-    printWindow.document.write(printDoc)
-    printWindow.document.close()
-    const triggerPrint = () => {
-      printWindow.focus()
+    const cleanup = () => {
+      frameWindow.removeEventListener('afterprint', cleanup)
       window.setTimeout(() => {
-        if (!printWindow.closed) {
-          printWindow.print()
-        }
-      }, 50)
+        iframe.remove()
+      }, 150)
     }
-    const closePrintWindow = () => {
-      printWindow.removeEventListener('afterprint', closePrintWindow)
-      window.removeEventListener('focus', closePrintWindow)
+
+    frameDocument.open()
+    frameDocument.write(printDoc)
+    frameDocument.close()
+
+    const triggerPrint = () => {
+      frameWindow.focus()
       window.setTimeout(() => {
-        if (!printWindow.closed) {
-          printWindow.close()
+        try {
+          frameWindow.print()
+        } finally {
+          cleanup()
         }
       }, 150)
     }
 
-    printWindow.addEventListener('afterprint', closePrintWindow)
-    window.addEventListener('focus', closePrintWindow, { once: true })
+    frameWindow.addEventListener('afterprint', cleanup)
 
-    triggerPrint()
+    if (frameDocument.readyState === 'complete') {
+      triggerPrint()
+    } else {
+      iframe.onload = () => triggerPrint()
+    }
 
-    this.setAlert('ATS PDF yazdırma dokümanı oluşturuldu. Önizleme ile aynı bölümler kullanılarak yazdırılıyor.', 'success')
+    this.setAlert('PDF yazdırma dokümanı oluşturuldu. Export gerçek metin kullanıyor.', 'success')
   }
 
   setPhotoFromFile = async (file: File | null) => {
@@ -824,6 +952,7 @@ class CVStore extends Store {
       const reader = new FileReader()
       reader.onload = () => {
         this.data.contact.photoDataUrl = typeof reader.result === 'string' ? reader.result : ''
+        this.bumpPreviewRevision()
       }
       reader.readAsDataURL(file)
     } catch (error) {
@@ -834,6 +963,7 @@ class CVStore extends Store {
 
   removePhoto = () => {
     this.data.contact.photoDataUrl = ''
+    this.bumpPreviewRevision()
   }
 
   mergeWithDefaults(value: Partial<CVData>) {
@@ -846,10 +976,7 @@ class CVStore extends Store {
       careerObjective: { ...merged.careerObjective, ...(value.careerObjective || {}) },
       activities: (() => {
         const raw = value.activities
-        if (Array.isArray(raw)) {
-          return raw.map((item) => ({ ...createActivityItem(), ...item }))
-        }
-        // Backward-compat: eski format { interests, memberships, volunteerWork }
+        if (Array.isArray(raw)) return raw.map((item) => ({ ...createActivityItem(), ...item }))
         if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
           const old = raw as { interests?: string; memberships?: string; volunteerWork?: string }
           const items: ActivityItem[] = []
@@ -860,7 +987,7 @@ class CVStore extends Store {
         }
         return merged.activities
       })(),
-      ats: { ...merged.ats, ...(value.ats || {}) },
+      ats: { ...merged.ats, ...(value.ats || {}), templateId: value.ats?.templateId || 'ats-safe' },
       education: (value.education || merged.education).map((item) => ({
         ...createEducationItem(),
         ...item,
