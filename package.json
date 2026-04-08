@@ -15,14 +15,13 @@
     "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
-    "@geajs/core": "^1.1.1",
-    "@geajs/ssr": "^1.0.2",
-    "@geajs/ui": "^0.2.0"
+    "@geajs/core": "^1.2.3",
+    "@geajs/ui": "^0.2.4"
   },
   "devDependencies": {
     "@geajs/vite-plugin": "^1.1.0",
     "@playwright/test": "^1.58.2",
     "typescript": "^5.9.3",
-    "vite": "^8.0.0"
+    "vite": "^8.0.7"
   }
 }
