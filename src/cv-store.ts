@@ -583,7 +583,22 @@ class CVStore extends Store {
     }, 140)
   }
 
-  private completeExport = () => {
+  private setExportProgress = (progress: number, message?: string) => {
+    if (!this.exportState.active) return
+    this.exportState.progress = Math.max(this.exportState.progress, Math.min(progress, 100))
+    if (message) {
+      this.exportState.message = message
+    }
+  }
+
+  private wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms))
+
+  private waitForUiPaint = () =>
+    new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => resolve())
+    })
+
+  private completeExport = (hideDelay = 260) => {
     this.clearExportTimers()
     this.exportState.progress = 100
     this.exportFinishTimer = window.setTimeout(() => {
@@ -591,7 +606,7 @@ class CVStore extends Store {
       this.exportState.type = ''
       this.exportState.message = ''
       this.exportState.progress = 0
-    }, 260)
+    }, hideDelay)
   }
 
   private failExport = () => {
@@ -821,16 +836,23 @@ class CVStore extends Store {
     this.beginExport('json', 'JSON taslağı hazırlanıyor...')
 
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 40))
+      await this.waitForUiPaint()
+      this.setExportProgress(24, 'Form verileri güncelleniyor...')
       this.flushFormControlsToStore()
+      await this.wait(80)
+      this.setExportProgress(52, 'JSON paketi oluşturuluyor...')
 
       const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
+      await this.wait(80)
+      this.setExportProgress(78, 'İndirme bağlantısı hazırlanıyor...')
       const url = URL.createObjectURL(blob)
       const anchor = document.createElement('a')
       anchor.href = url
       anchor.download = 'cv-taslagi.json'
       anchor.click()
+      this.setExportProgress(94, 'İndirme başlatılıyor...')
       URL.revokeObjectURL(url)
+      await this.wait(120)
       this.setAlert('Taslak JSON olarak indirildi.', 'success')
       this.completeExport()
     } catch (error) {
@@ -840,8 +862,10 @@ class CVStore extends Store {
     }
   }
 
-  printAtsCv = () => {
+  printAtsCv = async () => {
     this.beginExport('pdf', 'PDF yazdırma görünümü hazırlanıyor...')
+    await this.waitForUiPaint()
+    this.setExportProgress(20, 'Form verileri güncelleniyor...')
     this.flushFormControlsToStore()
 
     const localizedEntries = [
@@ -873,12 +897,22 @@ class CVStore extends Store {
       return `https://${value.replace(/^\/\//, '')}`
     }
 
-    const normalizeRichTextInput = (value: string) =>
-      value
-        .replace(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi, '$1')
+    const decodeHtmlEntities = (value: string) => {
+      const textarea = document.createElement('textarea')
+      textarea.innerHTML = value
+      return textarea.value
+    }
+
+    const normalizeRichTextInput = (value: string) => {
+      const decoded = decodeHtmlEntities(value)
+      return decoded
+        .replace(/<a\b[^>]*href\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s>]+))[^>]*>[\s\S]*?<\/a>/gi, (_match, g1, g2, g3) => g1 || g2 || g3 || ' ')
+        .replace(/\bhref\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s>]+))/gi, (_match, g1, g2, g3) => ` ${g1 || g2 || g3 || ''} `)
+        .replace(/<\/?a\b[^>]*>/gi, ' ')
         .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
         .trim()
+    }
 
     const splitTrailingPunctuation = (value: string) => {
       let end = value.length
@@ -942,6 +976,7 @@ class CVStore extends Store {
       website ? createAnchor(website, ensureHttpUrl(website)) : '',
     ].filter(Boolean)
     const sections = this.printSections.filter((section) => section.items.length > 0)
+    this.setExportProgress(54, 'PDF şablonu oluşturuluyor...')
 
     const sectionHtml = sections
       .map((section) => {
@@ -1015,12 +1050,13 @@ class CVStore extends Store {
         <h1>${escapeHtml(fullName)}</h1>
         ${roleText ? `<p class="role">${escapeHtml(roleText)}</p>` : ''}
       </div>
-      <div class="contact">${contacts.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>
+      <div class="contact">${contacts.map((item) => `<span>${item}</span>`).join('')}</div>
     </header>
     ${sectionHtml}
   </main>
 </body>
 </html>`
+    this.setExportProgress(76, 'Yazdırma penceresi hazırlanıyor...')
 
     const existingFrame = document.getElementById('ats-print-frame')
     if (existingFrame?.parentNode) {
@@ -1062,13 +1098,15 @@ class CVStore extends Store {
 
     const triggerPrint = () => {
       frameWindow.focus()
-      window.setTimeout(() => {
+      window.setTimeout(async () => {
         try {
+          this.setExportProgress(100, 'Yazdırma penceresi açılıyor...')
+          await this.waitForUiPaint()
+          this.completeExport(120)
           frameWindow.print()
         } finally {
           cleanup()
           this.setAlert('PDF yazdırma dokümanı oluşturuldu. Export gerçek metin kullanıyor.', 'success')
-          this.completeExport()
         }
       }, 150)
     }
