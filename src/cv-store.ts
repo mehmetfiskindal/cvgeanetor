@@ -805,24 +805,81 @@ class CVStore extends Store {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
 
+    const ensureHttpUrl = (value: string) => {
+      if (/^https?:\/\//i.test(value)) return value
+      return `https://${value.replace(/^\/\//, '')}`
+    }
+
+    const splitTrailingPunctuation = (value: string) => {
+      let end = value.length
+      while (end > 0 && /[),.;!?]$/.test(value.slice(end - 1, end))) {
+        end -= 1
+      }
+      return {
+        core: value.slice(0, end),
+        trailing: value.slice(end),
+      }
+    }
+
+    const createAnchor = (label: string, href: string) => `<a href="${escapeHtml(href)}">${escapeHtml(label)}</a>`
+
+    const linkifyText = (value: string) => {
+      if (!value) return ''
+
+      const tokenPattern = /(?:https?:\/\/|www\.)[^\s<>"'|]+|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+      let html = ''
+      let cursor = 0
+
+      for (const match of value.matchAll(tokenPattern)) {
+        const token = match[0]
+        const start = match.index ?? 0
+        html += escapeHtml(value.slice(cursor, start))
+
+        const { core, trailing } = splitTrailingPunctuation(token)
+        if (!core) {
+          html += escapeHtml(token)
+          cursor = start + token.length
+          continue
+        }
+
+        if (core.includes('@')) {
+          html += createAnchor(core, `mailto:${core}`)
+        } else {
+          html += createAnchor(core, ensureHttpUrl(core))
+        }
+
+        html += escapeHtml(trailing)
+        cursor = start + token.length
+      }
+
+      html += escapeHtml(value.slice(cursor))
+      return html
+    }
+
     const fullName = this.data.contact.fullName.trim() || 'Candidate Name'
     const roleText = this.data.ats.targetJobTitle.trim()
-    const contacts = [this.data.contact.email, this.data.contact.phone, this.data.contact.city, this.data.contact.linkedin, this.data.contact.website].filter((value) => value && value.trim())
+    const contacts = [
+      this.data.contact.email.trim() ? createAnchor(this.data.contact.email.trim(), `mailto:${this.data.contact.email.trim()}`) : '',
+      this.data.contact.phone.trim() ? createAnchor(this.data.contact.phone.trim(), `tel:${this.data.contact.phone.trim().replace(/\s+/g, '')}`) : '',
+      this.data.contact.city.trim() ? escapeHtml(this.data.contact.city.trim()) : '',
+      this.data.contact.linkedin.trim() ? createAnchor(this.data.contact.linkedin.trim(), ensureHttpUrl(this.data.contact.linkedin.trim())) : '',
+      this.data.contact.website.trim() ? createAnchor(this.data.contact.website.trim(), ensureHttpUrl(this.data.contact.website.trim())) : '',
+    ].filter(Boolean)
     const sections = this.printSections.filter((section) => section.items.length > 0)
 
     const sectionHtml = sections
       .map((section) => {
         const itemsHtml = section.items
           .map((item) => {
-            const bulletsHtml = item.bullets && item.bullets.length > 0 ? `<ul>${item.bullets.map((line) => `<li>${escapeHtml(line)}</li>`).join('')}</ul>` : ''
-            const textHtml = item.text ? `<p class="text">${escapeHtml(item.text)}</p>` : ''
+            const bulletsHtml = item.bullets && item.bullets.length > 0 ? `<ul>${item.bullets.map((line) => `<li>${linkifyText(line)}</li>`).join('')}</ul>` : ''
+            const textHtml = item.text ? `<p class="text">${linkifyText(item.text)}</p>` : ''
             return `<article class="item">
               <div class="item-head">
                 <div>
                   <h4>${escapeHtml(item.heading)}</h4>
-                  ${item.subheading ? `<p>${escapeHtml(item.subheading)}</p>` : ''}
+                  ${item.subheading ? `<p>${linkifyText(item.subheading)}</p>` : ''}
                 </div>
-                ${item.meta ? `<span>${escapeHtml(item.meta)}</span>` : ''}
+                ${item.meta ? `<span>${linkifyText(item.meta)}</span>` : ''}
               </div>
               ${textHtml}
               ${bulletsHtml}
@@ -851,6 +908,8 @@ class CVStore extends Store {
       font-feature-settings: "liga" 0, "clig" 0;
       text-rendering: geometricPrecision;
       -webkit-font-smoothing: antialiased;
+      user-select: text;
+      -webkit-user-select: text;
     }
     .page { width: 100%; max-width: 900px; margin: 0 auto; padding: 28px; }
     .header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid #d1d5db; padding-bottom: 14px; }
@@ -865,6 +924,7 @@ class CVStore extends Store {
     .item-head p, .item-head span, .text { margin: 6px 0 0; color: #374151; }
     ul { margin: 8px 0 0; padding-left: 18px; }
     li { margin: 2px 0; }
+    a { color: inherit; text-decoration: underline; text-underline-offset: 2px; word-break: break-word; }
     @page { size: A4; margin: 12mm; }
     @media print {
       .page { max-width: none; padding: 0; }
