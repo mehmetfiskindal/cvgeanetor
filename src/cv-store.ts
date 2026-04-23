@@ -353,6 +353,14 @@ class CVStore extends Store {
     message: '',
     tone: 'info' as AlertTone,
   }
+  exportState = {
+    active: false,
+    type: '' as '' | 'pdf' | 'json',
+    progress: 0,
+    message: '',
+  }
+  private exportProgressTimer: number | null = null
+  private exportFinishTimer: number | null = null
 
   get primaryLocale() {
     return this.data.ats.outputLanguage
@@ -548,6 +556,50 @@ class CVStore extends Store {
 
   clearAlert = () => {
     this.alert.message = ''
+  }
+
+  private clearExportTimers = () => {
+    if (this.exportProgressTimer !== null) {
+      window.clearInterval(this.exportProgressTimer)
+      this.exportProgressTimer = null
+    }
+    if (this.exportFinishTimer !== null) {
+      window.clearTimeout(this.exportFinishTimer)
+      this.exportFinishTimer = null
+    }
+  }
+
+  private beginExport = (type: 'pdf' | 'json', message: string) => {
+    this.clearExportTimers()
+    this.exportState.active = true
+    this.exportState.type = type
+    this.exportState.message = message
+    this.exportState.progress = 12
+
+    this.exportProgressTimer = window.setInterval(() => {
+      if (!this.exportState.active) return
+      const next = this.exportState.progress + Math.max(2, Math.round((90 - this.exportState.progress) * 0.22))
+      this.exportState.progress = Math.min(90, next)
+    }, 140)
+  }
+
+  private completeExport = () => {
+    this.clearExportTimers()
+    this.exportState.progress = 100
+    this.exportFinishTimer = window.setTimeout(() => {
+      this.exportState.active = false
+      this.exportState.type = ''
+      this.exportState.message = ''
+      this.exportState.progress = 0
+    }, 260)
+  }
+
+  private failExport = () => {
+    this.clearExportTimers()
+    this.exportState.active = false
+    this.exportState.type = ''
+    this.exportState.message = ''
+    this.exportState.progress = 0
   }
 
   goToStep = (index: number) => {
@@ -765,20 +817,31 @@ class CVStore extends Store {
     }
   }
 
-  exportToJson = () => {
-    this.flushFormControlsToStore()
+  exportToJson = async () => {
+    this.beginExport('json', 'JSON taslağı hazırlanıyor...')
 
-    const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = 'cv-taslagi.json'
-    anchor.click()
-    URL.revokeObjectURL(url)
-    this.setAlert('Taslak JSON olarak indirildi.', 'success')
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 40))
+      this.flushFormControlsToStore()
+
+      const blob = new Blob(['\uFEFF', JSON.stringify(this.data, null, 2)], { type: 'application/json;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = 'cv-taslagi.json'
+      anchor.click()
+      URL.revokeObjectURL(url)
+      this.setAlert('Taslak JSON olarak indirildi.', 'success')
+      this.completeExport()
+    } catch (error) {
+      console.error(error)
+      this.setAlert('JSON dışa aktarma sırasında hata oluştu.', 'error')
+      this.failExport()
+    }
   }
 
   printAtsCv = () => {
+    this.beginExport('pdf', 'PDF yazdırma görünümü hazırlanıyor...')
     this.flushFormControlsToStore()
 
     const localizedEntries = [
@@ -810,6 +873,13 @@ class CVStore extends Store {
       return `https://${value.replace(/^\/\//, '')}`
     }
 
+    const normalizeRichTextInput = (value: string) =>
+      value
+        .replace(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi, '$1')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+
     const splitTrailingPunctuation = (value: string) => {
       let end = value.length
       while (end > 0 && /[),.;!?]$/.test(value.slice(end - 1, end))) {
@@ -824,16 +894,17 @@ class CVStore extends Store {
     const createAnchor = (label: string, href: string) => `<a href="${escapeHtml(href)}">${escapeHtml(label)}</a>`
 
     const linkifyText = (value: string) => {
-      if (!value) return ''
+      const cleanValue = normalizeRichTextInput(value)
+      if (!cleanValue) return ''
 
       const tokenPattern = /(?:https?:\/\/|www\.)[^\s<>"'|]+|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
       let html = ''
       let cursor = 0
 
-      for (const match of value.matchAll(tokenPattern)) {
+      for (const match of cleanValue.matchAll(tokenPattern)) {
         const token = match[0]
         const start = match.index ?? 0
-        html += escapeHtml(value.slice(cursor, start))
+        html += escapeHtml(cleanValue.slice(cursor, start))
 
         const { core, trailing } = splitTrailingPunctuation(token)
         if (!core) {
@@ -852,18 +923,23 @@ class CVStore extends Store {
         cursor = start + token.length
       }
 
-      html += escapeHtml(value.slice(cursor))
+      html += escapeHtml(cleanValue.slice(cursor))
       return html
     }
 
     const fullName = this.data.contact.fullName.trim() || 'Candidate Name'
     const roleText = this.data.ats.targetJobTitle.trim()
+    const email = normalizeRichTextInput(this.data.contact.email)
+    const phone = normalizeRichTextInput(this.data.contact.phone)
+    const city = normalizeRichTextInput(this.data.contact.city)
+    const linkedin = normalizeRichTextInput(this.data.contact.linkedin)
+    const website = normalizeRichTextInput(this.data.contact.website)
     const contacts = [
-      this.data.contact.email.trim() ? createAnchor(this.data.contact.email.trim(), `mailto:${this.data.contact.email.trim()}`) : '',
-      this.data.contact.phone.trim() ? createAnchor(this.data.contact.phone.trim(), `tel:${this.data.contact.phone.trim().replace(/\s+/g, '')}`) : '',
-      this.data.contact.city.trim() ? escapeHtml(this.data.contact.city.trim()) : '',
-      this.data.contact.linkedin.trim() ? createAnchor(this.data.contact.linkedin.trim(), ensureHttpUrl(this.data.contact.linkedin.trim())) : '',
-      this.data.contact.website.trim() ? createAnchor(this.data.contact.website.trim(), ensureHttpUrl(this.data.contact.website.trim())) : '',
+      email ? createAnchor(email, `mailto:${email}`) : '',
+      phone ? createAnchor(phone, `tel:${phone.replace(/\s+/g, '')}`) : '',
+      city ? escapeHtml(city) : '',
+      linkedin ? createAnchor(linkedin, ensureHttpUrl(linkedin)) : '',
+      website ? createAnchor(website, ensureHttpUrl(website)) : '',
     ].filter(Boolean)
     const sections = this.printSections.filter((section) => section.items.length > 0)
 
@@ -969,6 +1045,7 @@ class CVStore extends Store {
     if (!frameWindow || !frameDocument) {
       iframe.remove()
       this.setAlert('PDF yazdırma görünümü oluşturulamadı.', 'error')
+      this.failExport()
       return
     }
 
@@ -990,6 +1067,8 @@ class CVStore extends Store {
           frameWindow.print()
         } finally {
           cleanup()
+          this.setAlert('PDF yazdırma dokümanı oluşturuldu. Export gerçek metin kullanıyor.', 'success')
+          this.completeExport()
         }
       }, 150)
     }
@@ -1001,8 +1080,6 @@ class CVStore extends Store {
     } else {
       iframe.onload = () => triggerPrint()
     }
-
-    this.setAlert('PDF yazdırma dokümanı oluşturuldu. Export gerçek metin kullanıyor.', 'success')
   }
 
   setPhotoFromFile = async (file: File | null) => {

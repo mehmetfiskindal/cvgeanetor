@@ -129,13 +129,24 @@ export default function StepPreview() {
       </label>
 
       <div class="action-row action-row-wrap">
-        <button class="button" click={cvStore.printAtsCv}>
-          ATS PDF olarak yazdır
+        <button class="button" click={cvStore.printAtsCv} disabled={cvStore.exportState.active}>
+          {cvStore.exportState.active && cvStore.exportState.type === 'pdf' ? 'PDF hazırlanıyor...' : 'ATS PDF olarak yazdır'}
         </button>
-        <button data-testid="export-json" class="ghost-button" click={cvStore.exportToJson}>
-          JSON olarak dışa aktar
+        <button data-testid="export-json" class="ghost-button" click={cvStore.exportToJson} disabled={cvStore.exportState.active}>
+          {cvStore.exportState.active && cvStore.exportState.type === 'json' ? 'JSON hazırlanıyor...' : 'JSON olarak dışa aktar'}
         </button>
       </div>
+      {cvStore.exportState.active && (
+        <div class="export-progress" role="status" aria-live="polite">
+          <div class="export-progress-head">
+            <span>{cvStore.exportState.message}</span>
+            <strong>{cvStore.exportState.progress}%</strong>
+          </div>
+          <div class="export-progress-track" aria-hidden="true">
+            <div class="export-progress-fill" style={{ width: `${cvStore.exportState.progress}%` }} />
+          </div>
+        </div>
+      )}
 
       <div class="ats-preview-wrapper" data-testid="ats-preview">
         <div class="preview-toolbar">
