@@ -362,6 +362,12 @@ class CVStore extends Store {
   private exportProgressTimer: number | null = null
   private exportFinishTimer: number | null = null
 
+  // Draft state for form editing (prevents lag during typing)
+  draftData: CVData | null = null
+  draftStepIndex = -1
+  hasDraftChanges = false
+  private draftDebounceTimer: number | null = null
+
   get primaryLocale() {
     return this.data.ats.outputLanguage
   }
@@ -669,6 +675,140 @@ class CVStore extends Store {
     this.bumpPreviewRevision()
   }
 
+  // Draft state management for form editing
+  initializeDraftForStep = (stepIndex: number) => {
+    if (this.draftStepIndex !== stepIndex) {
+      this.discardDraft()
+      this.draftData = JSON.parse(JSON.stringify(this.data))
+      this.draftStepIndex = stepIndex
+      this.hasDraftChanges = false
+    }
+  }
+
+  commitDraft = () => {
+    if (this.draftData && this.hasDraftChanges) {
+      this.data = this.draftData
+      this.bumpPreviewRevision()
+    }
+    this.discardDraft()
+  }
+
+  discardDraft = () => {
+    if (this.draftDebounceTimer) {
+      window.clearTimeout(this.draftDebounceTimer)
+      this.draftDebounceTimer = null
+    }
+    this.draftData = null
+    this.draftStepIndex = -1
+    this.hasDraftChanges = false
+  }
+
+  private applyDraftChange = (updater: (draft: CVData) => void) => {
+    if (!this.draftData) return
+    updater(this.draftData)
+    this.hasDraftChanges = true
+    this.bumpFormRevision()
+  }
+
+  updateDraftField = <K extends keyof CVData>(key: K, value: CVData[K]) => {
+    this.applyDraftChange((draft) => {
+      draft[key] = value as CVData[K]
+    })
+  }
+
+  updateDraftContactField = (field: keyof ContactInfo, value: string) => {
+    this.applyDraftChange((draft) => {
+      draft.contact = { ...draft.contact, [field]: value }
+    })
+  }
+
+  updateDraftPersonalField = (field: keyof PersonalDetails, value: string | boolean) => {
+    this.applyDraftChange((draft) => {
+      draft.personalDetails = { ...draft.personalDetails, [field]: value }
+    })
+  }
+
+  updateDraftCareerObjective = (locale: keyof LocalizedText, value: string) => {
+    this.applyDraftChange((draft) => {
+      draft.careerObjective = { ...draft.careerObjective, [locale]: value }
+    })
+  }
+
+  updateDraftCollectionField = <K extends CollectionKey, F extends keyof CVData[K][number]>(
+    key: K,
+    id: string,
+    field: F,
+    value: CVData[K][number][F],
+  ) => {
+    this.applyDraftChange((draft) => {
+      const collection = draft[key] as CVData[K]
+      const index = collection.findIndex((item) => (item as { id: string }).id === id)
+      if (index !== -1) {
+        collection[index] = { ...collection[index], [field]: value } as CVData[K][number]
+      }
+    })
+  }
+
+  updateDraftCollectionLocalizedField = <
+    K extends CollectionKey,
+    F extends keyof CVData[K][number],
+    L extends keyof LocalizedText,
+  >(
+    key: K,
+    id: string,
+    field: F,
+    locale: L,
+    value: string,
+  ) => {
+    this.applyDraftChange((draft) => {
+      const collection = draft[key] as CVData[K]
+      const index = collection.findIndex((item) => (item as { id: string }).id === id)
+      if (index !== -1) {
+        const item = collection[index]
+        const fieldValue = item[field] as LocalizedText
+        collection[index] = {
+          ...item,
+          [field]: { ...fieldValue, [locale]: value },
+        } as CVData[K][number]
+      }
+    })
+  }
+
+  updateDraftAtsField = (field: keyof AtsSettings, value: string) => {
+    this.applyDraftChange((draft) => {
+      draft.ats = { ...draft.ats, [field]: value }
+    })
+  }
+
+  updateDraftSetCurrentFlag = (collection: 'experience' | 'internships' | 'projects', id: string, current: boolean) => {
+    this.applyDraftChange((draft) => {
+      const items = draft[collection]
+      const index = items.findIndex((item) => item.id === id)
+      if (index !== -1) {
+        items[index] = { ...items[index], current }
+      }
+    })
+  }
+
+  addDraftCollectionItem = <K extends CollectionKey>(key: K, createFn: () => CVData[K][number]) => {
+    this.applyDraftChange((draft) => {
+      const collection = draft[key] as CVData[K]
+      collection.push(createFn())
+    })
+  }
+
+  removeDraftCollectionItem = <K extends CollectionKey>(key: K, id: string) => {
+    this.applyDraftChange((draft) => {
+      const collection = draft[key] as CVData[K]
+      if (collection.length > 1) {
+        const index = collection.findIndex((item) => (item as { id: string }).id === id)
+        if (index !== -1) {
+          collection.splice(index, 1)
+        }
+      }
+    })
+  }
+
   addEducation = () => {
     this.data.education = [...this.data.education, createEducationItem()]
     this.bumpFormRevision()
@@ -833,6 +973,8 @@ class CVStore extends Store {
   }
 
   exportToJson = async () => {
+    // Commit any pending draft changes before export
+    this.commitDraft()
     this.beginExport('json', 'JSON taslağı hazırlanıyor...')
 
     try {
@@ -863,6 +1005,8 @@ class CVStore extends Store {
   }
 
   printAtsCv = async () => {
+    // Commit any pending draft changes before export
+    this.commitDraft()
     this.beginExport('pdf', 'PDF yazdırma görünümü hazırlanıyor...')
     await this.waitForUiPaint()
     this.setExportProgress(20, 'Form verileri güncelleniyor...')

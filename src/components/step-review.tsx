@@ -10,6 +10,7 @@ const scoreTone = (score: number) => {
 const signedDelta = (value: number) => (value > 0 ? `+${value}` : `${value}`)
 
 export default function StepReview() {
+  const data = cvStore.draftData || cvStore.data
   const audit = cvStore.atsAudit
   const locale = cvStore.primaryLocale
   const jobDrafts = cvStore.helperDrafts.filter((draft) => draft.actionId.startsWith('job-'))
@@ -28,11 +29,11 @@ export default function StepReview() {
       <div class="grid two-col">
         <label class="field">
           <span>Hedef job title</span>
-          <input value={cvStore.data.ats.targetJobTitle} input={(event: Event) => cvStore.updateAtsField('targetJobTitle', (event.target as HTMLInputElement).value)} placeholder="Flutter Developer" />
+          <input value={data.ats.targetJobTitle} input={(event: Event) => cvStore.updateDraftAtsField('targetJobTitle', (event.target as HTMLInputElement).value)} placeholder="Flutter Developer" />
         </label>
         <label class="field">
           <span>ATS output language</span>
-          <select value={cvStore.data.ats.outputLanguage} change={(event: Event) => cvStore.setOutputLanguage((event.target as HTMLSelectElement).value as 'tr' | 'en')}>
+          <select value={data.ats.outputLanguage} change={(event: Event) => cvStore.setOutputLanguage((event.target as HTMLSelectElement).value as 'tr' | 'en')}>
             <option value="en">English output</option>
             <option value="tr">Turkish output</option>
           </select>
@@ -43,8 +44,8 @@ export default function StepReview() {
         <span>Job description / keywords</span>
         <textarea
           rows="8"
-          value={cvStore.data.ats.jobDescription}
-          input={(event: Event) => cvStore.updateAtsField('jobDescription', (event.target as HTMLTextAreaElement).value)}
+          value={data.ats.jobDescription}
+          input={(event: Event) => cvStore.updateDraftAtsField('jobDescription', (event.target as HTMLTextAreaElement).value)}
           placeholder={'Flutter\nFirebase\nREST API\nApp Store\nPlay Console'}
         />
       </label>

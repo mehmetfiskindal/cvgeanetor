@@ -4,6 +4,7 @@ import SuggestionDrafts from './suggestion-drafts'
 const localeLabel = (locale: 'tr' | 'en') => (locale === 'tr' ? 'TR' : 'EN')
 
 export default function StepObjective() {
+  const data = cvStore.draftData || cvStore.data
   const primaryDrafts = cvStore.draftsByTarget('careerObjective', undefined, cvStore.primaryLocale)
   const secondaryDrafts = cvStore.draftsByTarget('careerObjective', undefined, cvStore.secondaryLocale)
 
@@ -41,8 +42,8 @@ export default function StepObjective() {
           <span>Summary ({localeLabel(cvStore.primaryLocale)})</span>
           <textarea
             rows={5}
-            value={cvStore.data.careerObjective[cvStore.primaryLocale]}
-            input={(event: Event) => cvStore.updateCareerObjective(cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)}
+            value={data.careerObjective[cvStore.primaryLocale]}
+            input={(event: Event) => cvStore.updateDraftCareerObjective(cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)}
           />
         </label>
 
@@ -56,8 +57,8 @@ export default function StepObjective() {
             <span>Summary ({localeLabel(cvStore.secondaryLocale)})</span>
             <textarea
               rows={5}
-              value={cvStore.data.careerObjective[cvStore.secondaryLocale]}
-              input={(event: Event) => cvStore.updateCareerObjective(cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
+              value={data.careerObjective[cvStore.secondaryLocale]}
+              input={(event: Event) => cvStore.updateDraftCareerObjective(cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
             />
           </label>
 

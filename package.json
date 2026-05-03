@@ -20,7 +20,7 @@
     "@geajs/ui": "^0.2.4"
   },
   "devDependencies": {
-    "@geajs/vite-plugin": "^1.1.0",
+    "@geajs/vite-plugin": "^1.2.3",
     "@playwright/test": "^1.58.2",
     "typescript": "^5.9.3",
     "vite": "^8.0.7"

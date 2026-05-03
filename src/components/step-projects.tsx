@@ -4,6 +4,7 @@ import SuggestionDrafts from './suggestion-drafts'
 const localeLabel = (locale: 'tr' | 'en') => (locale === 'tr' ? 'TR' : 'EN')
 
 export default function StepProjects() {
+  const data = cvStore.draftData || cvStore.data
   const locale = cvStore.primaryLocale
 
   return (
@@ -17,35 +18,35 @@ export default function StepProjects() {
         <p class="hint-chip">Her proje için yayın linki, anahtar kelimeler ve sonuç odaklı bullet seti en değerli sinyallerden biri.</p>
       </header>
 
-      {cvStore.data.projects.map((item) => (
+      {data.projects.map((item) => (
         <article class="entry-card" key={item.id}>
           <div class="grid two-col">
             <label class="field">
               <span>Proje adı</span>
-              <input value={item.name} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'name', (event.target as HTMLInputElement).value)} />
+              <input value={item.name} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'name', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Rolün</span>
-              <input value={item.role} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'role', (event.target as HTMLInputElement).value)} />
+              <input value={item.role} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'role', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Başlangıç</span>
-              <input type="month" value={item.startDate} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'startDate', (event.target as HTMLInputElement).value)} />
+              <input type="month" value={item.startDate} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'startDate', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Bitiş</span>
-              <input type="month" value={item.endDate} disabled={item.current} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'endDate', (event.target as HTMLInputElement).value)} />
+              <input type="month" value={item.endDate} disabled={item.current} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'endDate', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Proje linki</span>
-              <input value={item.url} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'url', (event.target as HTMLInputElement).value)} />
+              <input value={item.url} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'url', (event.target as HTMLInputElement).value)} />
             </label>
             <label class="field">
               <span>Anahtar kelimeler</span>
-              <input value={item.keywords} input={(event: Event) => cvStore.updateCollectionField('projects', item.id, 'keywords', (event.target as HTMLInputElement).value)} placeholder="Flutter, Firebase, REST API, App Store" />
+              <input value={item.keywords} input={(event: Event) => cvStore.updateDraftCollectionField('projects', item.id, 'keywords', (event.target as HTMLInputElement).value)} placeholder="Flutter, Firebase, REST API, App Store" />
             </label>
             <label class="checkbox-field">
-              <input type="checkbox" checked={item.current} change={(event: Event) => cvStore.setCollectionCurrentFlag('projects', item.id, (event.target as HTMLInputElement).checked)} />
+              <input type="checkbox" checked={item.current} change={(event: Event) => cvStore.updateDraftSetCurrentFlag('projects', item.id, (event.target as HTMLInputElement).checked)} />
               <span>Halen devam ediyor</span>
             </label>
           </div>
@@ -71,14 +72,14 @@ export default function StepProjects() {
           <div class="grid two-col">
             <label class="field">
               <span>Katkılar ve sonuç ({localeLabel(locale)})</span>
-              <textarea rows="6" value={item.bullets[locale]} input={(event: Event) => cvStore.updateCollectionLocalizedField('projects', item.id, 'bullets', cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)} />
+              <textarea rows="6" value={item.bullets[locale]} input={(event: Event) => cvStore.updateDraftCollectionLocalizedField('projects', item.id, 'bullets', cvStore.primaryLocale, (event.target as HTMLTextAreaElement).value)} />
             </label>
             <label class="field">
               <span>İkincil dil ({localeLabel(cvStore.secondaryLocale)})</span>
               <textarea
                 rows="6"
                 value={item.bullets[cvStore.secondaryLocale]}
-                input={(event: Event) => cvStore.updateCollectionLocalizedField('projects', item.id, 'bullets', cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
+                input={(event: Event) => cvStore.updateDraftCollectionLocalizedField('projects', item.id, 'bullets', cvStore.secondaryLocale, (event.target as HTMLTextAreaElement).value)}
               />
             </label>
           </div>
@@ -86,14 +87,14 @@ export default function StepProjects() {
           <SuggestionDrafts drafts={cvStore.draftsByTarget('projects', item.id, locale)} />
 
           <div class="entry-actions">
-            <button class="ghost-button" click={() => cvStore.removeProject(item.id)}>
+            <button class="ghost-button" click={() => cvStore.removeDraftCollectionItem('projects', item.id)}>
               Kaydı kaldır
             </button>
           </div>
         </article>
       ))}
 
-      <button class="button" click={cvStore.addProject}>
+      <button class="button" click={() => cvStore.addDraftCollectionItem('projects', () => ({ id: crypto.randomUUID(), name: '', role: '', startDate: '', endDate: '', current: false, url: '', keywords: '', bullets: { tr: '', en: '' } }))}>
         Proje ekle
       </button>
     </div>
