@@ -11,7 +11,7 @@ export default function StepProjects() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 4</p>
+          <p class="eyebrow">Projeler</p>
           <h2>Projeler</h2>
           <p class="section-copy">Projeleri ATS için yayın, stack, platform ve etki açısından açıkça yaz. App Store, Play Console, Firebase veya REST API gibi kelimeleri doğal biçimde görünür tut.</p>
         </div>

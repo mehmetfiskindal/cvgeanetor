@@ -19,7 +19,7 @@ export default function StepReview() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 6</p>
+          <p class="eyebrow">ATS Analizi</p>
           <h2>İş ilanı eşleştirme</h2>
           <p class="section-copy">Skoru tek sayı olarak değil, nedenleriyle birlikte gör. Bu adım ilan anahtar kelimelerini, eksik eşleşmeleri ve iş ilanına özel kontrol sonuçlarını tek panelde toplar.</p>
         </div>

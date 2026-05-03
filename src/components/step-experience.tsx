@@ -11,7 +11,7 @@ export default function StepExperience() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 3</p>
+          <p class="eyebrow">İş Deneyimi</p>
           <h2>Deneyim</h2>
           <p class="section-copy">İş ve staj kayıtlarını tek akışta düzenle. Her kayıt için mikro kontroller ile madde yapısını, profesyonellik düzeyini ve etki sinyallerini kontrol et.</p>
         </div>

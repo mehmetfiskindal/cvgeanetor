@@ -55,7 +55,7 @@ img {
 }
 
 .app-shell {
-  width: min(1440px, calc(100% - 32px));
+  width: min(1600px, calc(100% - 32px));
   margin: 0 auto;
   padding: 28px 0 40px;
   display: grid;
@@ -203,15 +203,15 @@ h1 {
 
 .workspace {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) minmax(320px, 0.92fr);
-  gap: 18px;
+  grid-template-columns: minmax(600px, 1.4fr) minmax(500px, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
 .sidebar-card,
 .form-card,
 .preview-card {
-  padding: 22px;
+  padding: 28px;
 }
 
 .sidebar-card,
@@ -226,10 +226,15 @@ h1 {
   scrollbar-gutter: stable;
 }
 
+.form-card {
+  min-width: 600px;
+}
+
 .sidebar-head,
 .form-header,
 .preview-toolbar,
 .wizard-footer,
+.form-footer,
 .timeline-head,
 .action-row,
 .entry-actions {
@@ -237,6 +242,19 @@ h1 {
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+}
+
+.form-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.form-footer .footer-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .step-list,
@@ -886,6 +904,7 @@ select:focus {
   }
 
   .wizard-footer,
+  .form-footer,
   .action-row,
   .form-header,
   .compact-card,
@@ -896,6 +915,10 @@ select:focus {
   .ats-print-item-head {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .form-footer .footer-actions {
+    flex-direction: column;
   }
 
   .footer-meta {

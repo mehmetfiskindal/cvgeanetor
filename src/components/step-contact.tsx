@@ -9,7 +9,7 @@ export default function StepContact() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 1</p>
+          <p class="eyebrow">Kişisel Bilgiler</p>
           <h2>Kişisel ve iletişim bilgileri</h2>
           <p class="section-copy">CV'nin en üstünde görünecek temel iletişim bilgisini tamamla. Fotoğraf ve ek kişisel alanlar isteğe bağlıdır; ATS export bunları otomatik olarak kritik içerikten ayırır.</p>
         </div>

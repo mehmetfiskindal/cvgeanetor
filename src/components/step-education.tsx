@@ -11,7 +11,7 @@ export default function StepEducation() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 5</p>
+          <p class="eyebrow">Eğitim ve Beceriler</p>
           <h2>Eğitim ve beceriler</h2>
           <p class="section-copy">Eğitim, kurslar ve beceri gruplarını tek adımda topla. Bu alanın amacı ATS'ye "neleri bildiğini" temiz başlıklar ve tekrar etmeyen skill bloklarıyla göstermek.</p>
         </div>

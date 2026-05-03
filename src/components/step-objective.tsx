@@ -12,7 +12,7 @@ export default function StepObjective() {
     <div class="form-stack">
       <header class="form-header">
         <div>
-          <p class="eyebrow">Adım 2</p>
+          <p class="eyebrow">Profesyonel Özet</p>
           <h2>Profesyonel özet</h2>
           <p class="section-copy">Seçili output dilini önce doldur, sonra uzunluk, ilan uyumu ve ton kontrolleriyle özetin eksiklerini net biçimde gör.</p>
         </div>
