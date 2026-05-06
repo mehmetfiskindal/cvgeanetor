@@ -505,7 +505,7 @@ class CVStore extends Store {
     this.bumpFormRevision()
   }
 
-  discardDraft = (id: string) => {
+  discardSuggestionDraft = (id: string) => {
     this.helperDrafts = this.helperDrafts.filter((draft) => draft.id !== id)
     this.openDraftIds = this.openDraftIds.filter((item) => item !== id)
     this.bumpFormRevision()
@@ -678,7 +678,7 @@ class CVStore extends Store {
   // Draft state management for form editing
   initializeDraftForStep = (stepIndex: number) => {
     if (this.draftStepIndex !== stepIndex) {
-      this.discardDraft()
+      this.discardStepDraft()
       this.draftData = JSON.parse(JSON.stringify(this.data))
       this.draftStepIndex = stepIndex
       this.hasDraftChanges = false
@@ -690,10 +690,10 @@ class CVStore extends Store {
       this.data = this.draftData
       this.bumpPreviewRevision()
     }
-    this.discardDraft()
+    this.discardStepDraft()
   }
 
-  discardDraft = () => {
+  discardStepDraft = () => {
     if (this.draftDebounceTimer) {
       window.clearTimeout(this.draftDebounceTimer)
       this.draftDebounceTimer = null
@@ -704,7 +704,10 @@ class CVStore extends Store {
   }
 
   private applyDraftChange = (updater: (draft: CVData) => void) => {
-    if (!this.draftData) return
+    if (!this.draftData) {
+      this.draftData = JSON.parse(JSON.stringify(this.data))
+      this.draftStepIndex = this.currentStep
+    }
     updater(this.draftData)
     this.hasDraftChanges = true
     this.bumpFormRevision()
@@ -949,6 +952,7 @@ class CVStore extends Store {
       const normalizedParsed = normalizeImportedText(parsed)
       const merged = this.mergeWithDefaults(normalizedParsed)
 
+      this.discardStepDraft()
       this.data = merged as CVData
       this.data.experience = [...this.data.experience]
       this.data.internships = [...this.data.internships]
@@ -973,14 +977,13 @@ class CVStore extends Store {
   }
 
   exportToJson = async () => {
-    // Commit any pending draft changes before export
-    this.commitDraft()
     this.beginExport('json', 'JSON taslağı hazırlanıyor...')
 
     try {
       await this.waitForUiPaint()
       this.setExportProgress(24, 'Form verileri güncelleniyor...')
       this.flushFormControlsToStore()
+      this.commitDraft()
       await this.wait(80)
       this.setExportProgress(52, 'JSON paketi oluşturuluyor...')
 
@@ -1005,12 +1008,11 @@ class CVStore extends Store {
   }
 
   printAtsCv = async () => {
-    // Commit any pending draft changes before export
-    this.commitDraft()
     this.beginExport('pdf', 'PDF yazdırma görünümü hazırlanıyor...')
     await this.waitForUiPaint()
     this.setExportProgress(20, 'Form verileri güncelleniyor...')
     this.flushFormControlsToStore()
+    this.commitDraft()
 
     const localizedEntries = [
       this.data.careerObjective,

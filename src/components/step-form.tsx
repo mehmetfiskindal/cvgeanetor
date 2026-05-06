@@ -30,7 +30,7 @@ export default class StepForm extends Component {
 
         <footer class="form-footer">
           <div class="footer-actions">
-            <button class="button" click={() => cvStore.exportToJson()}>
+            <button class="button" data-testid="export-json" click={() => cvStore.exportToJson()}>
               JSON olarak kaydet
             </button>
             <button class="button button-primary" click={() => cvStore.printAtsCv()}>

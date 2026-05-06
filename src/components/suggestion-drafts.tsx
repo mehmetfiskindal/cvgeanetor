@@ -27,7 +27,7 @@ export default function SuggestionDrafts({ drafts, emptyText }: SuggestionDrafts
                 <button class="ghost-button" data-testid={`draft-preview-${draft.id}`} click={() => cvStore.toggleDraftPreview(draft.id)}>
                   {isOpen ? 'Detayı gizle' : 'Detayı aç'}
                 </button>
-                <button class="ghost-button" click={() => cvStore.discardDraft(draft.id)}>
+                <button class="ghost-button" click={() => cvStore.discardSuggestionDraft(draft.id)}>
                   Kapat
                 </button>
               </div>
