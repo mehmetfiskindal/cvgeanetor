@@ -1,0 +1,27 @@
+diff --git a/node_modules/@geajs/vite-plugin/dist/index.mjs b/node_modules/@geajs/vite-plugin/dist/index.mjs
+index 203498d..a2af60c 100644
+--- a/node_modules/@geajs/vite-plugin/dist/index.mjs
++++ b/node_modules/@geajs/vite-plugin/dist/index.mjs
+@@ -1484,6 +1484,13 @@ function collectPatchRowPlan(block, itemName) {
+ 		keep: [],
+ 		deadBindings: /* @__PURE__ */ new Set()
+ 	};
++	const aliasedTargets = /* @__PURE__ */ new Set();
++	for (const stmt of block.body) {
++		if (!t.isVariableDeclaration(stmt)) continue;
++		for (const d of stmt.declarations) {
++			if (t.isIdentifier(d.id) && d.init && t.isIdentifier(d.init) && d.init.name !== d.id.name) aliasedTargets.add(d.init.name);
++		}
++	}
+ 	const stashSlots = /* @__PURE__ */ new Map();
+ 	for (const stmt of block.body) {
+ 		const call = extractReactiveCall(stmt);
+@@ -1518,7 +1525,7 @@ function collectPatchRowPlan(block, itemName) {
+ 		else if (result.kind === "write") {
+ 			plan.patchStmts.push(result.patchStmt);
+ 			plan.initStmts.push(result.initStmt);
+-			for (const name of result.deadBindings) plan.deadBindings.add(name);
++			for (const name of result.deadBindings) if (!aliasedTargets.has(name)) plan.deadBindings.add(name);
+ 		}
+ 	}
+ 	return plan;

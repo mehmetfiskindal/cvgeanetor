@@ -1,0 +1,160 @@
+﻿{
+  "contact": {
+    "fullName": "Import Kisi 1787401506602",
+    "email": "import@example.com",
+    "phone": "+90 555 111 22 33",
+    "address": "",
+    "city": "",
+    "linkedin": "",
+    "website": "",
+    "photoDataUrl": ""
+  },
+  "personalDetails": {
+    "nationality": "",
+    "gender": "",
+    "birthPlace": "",
+    "birthDate": "",
+    "militaryStatus": "",
+    "maritalStatus": "",
+    "showOptionalDetails": false
+  },
+  "careerObjective": {
+    "tr": "",
+    "en": ""
+  },
+  "education": [
+    {
+      "id": "xnqm3oro",
+      "school": "",
+      "faculty": "",
+      "department": "",
+      "degree": "",
+      "startDate": "",
+      "endDate": "",
+      "gpa": "",
+      "notes": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "trainings": [
+    {
+      "id": "2rq4wv38",
+      "title": "",
+      "provider": "",
+      "date": "",
+      "duration": ""
+    }
+  ],
+  "coursesOrCongresses": [
+    {
+      "id": "import-congress",
+      "title": "Import Kongre 1787401506602",
+      "location": "Istanbul",
+      "date": "2026-05"
+    }
+  ],
+  "experience": [
+    {
+      "id": "arpjf84g",
+      "company": "",
+      "title": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "location": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "internships": [
+    {
+      "id": "dcukr4ly",
+      "company": "",
+      "title": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "location": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "projects": [
+    {
+      "id": "k07d9zuu",
+      "name": "",
+      "role": "",
+      "startDate": "",
+      "endDate": "",
+      "current": false,
+      "url": "",
+      "keywords": "",
+      "bullets": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "languages": [
+    {
+      "id": "sdkjw9yk",
+      "name": "",
+      "level": "",
+      "score": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "computerSkills": [
+    {
+      "id": "4phr4ykg",
+      "name": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "otherSkills": [
+    {
+      "id": "5k8u9lyv",
+      "name": "",
+      "details": {
+        "tr": "",
+        "en": ""
+      }
+    }
+  ],
+  "activities": [
+    {
+      "id": "3vc32fhy",
+      "category": "",
+      "description": ""
+    }
+  ],
+  "references": [
+    {
+      "id": "0lciqioi",
+      "fullName": "",
+      "title": "",
+      "organization": "",
+      "phone": "",
+      "email": ""
+    }
+  ],
+  "referencesAvailableOnRequest": false,
+  "ats": {
+    "targetJobTitle": "",
+    "jobDescription": "",
+    "outputLanguage": "tr",
+    "templateId": "ats-safe"
+  }
+}

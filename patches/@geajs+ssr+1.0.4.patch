@@ -1,0 +1,35 @@
+diff --git a/node_modules/@geajs/ssr/dist/chunk-KDLSDZE2.js b/node_modules/@geajs/ssr/dist/chunk-KDLSDZE2.js
+index 5b54409..96cb98d 100644
+--- a/node_modules/@geajs/ssr/dist/chunk-KDLSDZE2.js
++++ b/node_modules/@geajs/ssr/dist/chunk-KDLSDZE2.js
+@@ -432,11 +432,29 @@ function extractStoreData(store) {
+   }
+   return data;
+ }
++function sanitizeForSerialization(value, seen = new WeakMap()) {
++  if (value === null || typeof value !== "object") return value;
++  if (seen.has(value)) return seen.get(value);
++  if (value instanceof Date) return new Date(value.getTime());
++  if (Array.isArray(value)) {
++    const out = [];
++    seen.set(value, out);
++    value.forEach((v, i) => out[i] = sanitizeForSerialization(v, seen));
++    return out;
++  }
++  if (value instanceof Set || value instanceof Map || value instanceof RegExp || ArrayBuffer.isView(value) || value instanceof ArrayBuffer) return value;
++  const proto = Object.getPrototypeOf(value);
++  if (proto !== Object.prototype && proto !== null) return value;
++  const out = {};
++  seen.set(value, out);
++  for (const k of Object.keys(value)) out[k] = sanitizeForSerialization(value[k], seen);
++  return out;
++}
+ function serializeStores(stores, registry) {
+   const state = {};
+   for (const [name, store] of Object.entries(registry)) {
+     if (!stores.includes(store)) continue;
+-    state[name] = extractStoreData(store);
++    state[name] = sanitizeForSerialization(extractStoreData(store));
+   }
+   return uneval(state);
+ }

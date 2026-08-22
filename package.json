@@ -1,27 +1,30 @@
 {
   "name": "cvgeanetor",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "vite",
     "dev:ssr": "vite --mode ssr",
     "build": "vite build",
     "build:ssr": "npm run build && vite build --mode ssr --ssr src/entry-server.ts --outDir dist/server",
     "preview": "vite preview",
+    "start:ssr": "node server.mjs",
     "test": "node --test --experimental-strip-types tests/*.test.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
-    "@geajs/core": "^1.2.3",
-    "@geajs/ssr": "^1.0.2",
-    "@geajs/ui": "^0.2.4"
+    "@geajs/core": "^1.4.0",
+    "@geajs/ssr": "^1.0.4",
+    "@geajs/ui": "^0.2.9"
   },
   "devDependencies": {
-    "@geajs/vite-plugin": "^1.2.3",
+    "@geajs/vite-plugin": "^1.4.1",
     "@playwright/test": "^1.58.2",
+    "patch-package": "^8.0.1",
     "typescript": "^5.9.3",
     "vite": "^8.0.7"
   }

@@ -1,0 +1,23 @@
+diff --git a/node_modules/linkedom/esm/html/select-element.js b/node_modules/linkedom/esm/html/select-element.js
+index 21409c2..23ab27e 100644
+--- a/node_modules/linkedom/esm/html/select-element.js
++++ b/node_modules/linkedom/esm/html/select-element.js
+@@ -36,6 +36,18 @@ class HTMLSelectElement extends HTMLElement {
+   /* c8 ignore stop */
+ 
+   get value() { return this.querySelector('option[selected]')?.value; }
++
++  set value(newValue) {
++    let matched = false;
++    for (const option of this.options) {
++      if (!matched && option.value === newValue) {
++        option.selected = true;
++        matched = true;
++      } else if (option.selected) {
++        option.selected = false;
++      }
++    }
++  }
+ }
+ 
+ registerHTMLClass(tagName, HTMLSelectElement);
